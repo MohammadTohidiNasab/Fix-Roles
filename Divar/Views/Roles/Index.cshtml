@@ -6,6 +6,10 @@
     <a asp-action="CreateRole" class="btn btn-primary">Create New Role</a>
 </p>
 
+<p>
+    <a asp-action="SelectUser" class="btn btn-primary"> to user</a>
+</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -19,10 +23,7 @@
             <tr>
                 <td>@role.Name</td>
                 <td>
-                    <a asp-action="AssignRoleToUser" asp-route-roleName="@role.Name" class="btn btn-secondary">Assign to User</a>
                     <a asp-action="DeleteRole" asp-route-id="@role.Id" class="btn btn-danger">Delete</a>
-
-
                 </td>
             </tr>
         }

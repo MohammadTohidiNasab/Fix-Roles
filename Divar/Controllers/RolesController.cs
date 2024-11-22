@@ -1,4 +1,6 @@
-﻿public class RolesController : Controller
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+public class RolesController : Controller
 {
     private readonly UserManager<CustomUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -62,6 +64,12 @@
 
 
 
+    // ویرایش نقش ها
+
+
+
+   
+
 
 
 
@@ -94,59 +102,78 @@
 
 
     //  اختصاص نقش به کاربر
-    [HttpGet]
-    public async Task<IActionResult> AssignRoleToUser(string userId)
+
+
+    public IActionResult SelectUser()
     {
-        var user = await _userManager.FindByIdAsync(userId);
-        if (user == null)
+        // نمایش لیست کاربران برای انتخاب
+        var users = _userManager.Users.ToList();
+        return View(users);
+    }
+
+    public async Task<IActionResult> ManageRole(string id)
+    {
+        if (id == null)
         {
-            ModelState.AddModelError(string.Empty, "کاربر پیدا نشد.");
-            return RedirectToAction("Index", "Roles"); // Redirect to the Roles index if the user is not found
+            return RedirectToAction("SelectUser");
         }
 
-        var roles = _roleManager.Roles.ToList();
-        var model = new AssignRoleViewModel
+        // Find the user by Id
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null)
         {
-            UserId = userId,
-            AvailableRoles = roles.Select(r => r.Name).ToList() // Select role names
+            return NotFound();
+        }
+
+        // Get user roles and all roles
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var allRoles = _roleManager.Roles.ToList();
+
+        // Create the ManageRoleViewModel including additional fields
+        var model = new ManageRoleViewModel
+        {
+            CustomUserId = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email,
+            UserRoles = userRoles.ToList(),
+            AllRoles = allRoles
         };
 
-        return View(model); // Pass the AssignRoleViewModel to the view
+        return View(model);
     }
 
-    // اصلاح شده: اختصاص نقش به کاربر (POST)
-    [HttpPost]
-    public async Task<IActionResult> AssignRoleToUser(AssignRoleViewModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            var roles = _roleManager.Roles.ToList();
-            model.AvailableRoles = roles.Select(r => r.Name).ToList(); // Populate available roles if model state is invalid
-            return View(model);
-        }
 
-        var user = await _userManager.FindByIdAsync(model.UserId);
+    // مدیریت نقش کاربران (POST)
+    [HttpPost]
+    public async Task<IActionResult> ManageRole(ManageRoleViewModel model)
+    {
+        // پیدا کردن کاربر بر اساس Id
+        var user = await _userManager.FindByIdAsync(model.CustomUserId);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "کاربر پیدا نشد.");
-            return RedirectToAction("Index", "Roles");
+            return NotFound();
         }
 
-        // Add selected roles to the user
-        foreach (var role in model.SelectedRoles)
+        // گرفتن نقش‌های کاربر فعلی
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var rolesToAdd = model.Roles.Except(userRoles).ToList();
+        var rolesToRemove = userRoles.Except(model.Roles).ToList();
+
+        // اضافه کردن نقش‌ها
+        foreach (var role in rolesToAdd)
         {
-            var result = await _userManager.AddToRoleAsync(user, role);
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+            await _userManager.AddToRoleAsync(user, role);
         }
 
-        return RedirectToAction("Index", "Roles");
+        // حذف نقش‌ها
+        foreach (var role in rolesToRemove)
+        {
+            await _userManager.RemoveFromRoleAsync(user, role);
+        }
+
+        return RedirectToAction("Index");
     }
-
-
 }
+
+
