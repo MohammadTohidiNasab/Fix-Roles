@@ -1,40 +1,23 @@
-﻿@model IEnumerable<Divar.Models.CustomUser>
+﻿@model AssignRoleViewModel
 
-<h2>نسبت دادن نقش به کاربر</h2>
+<h2>اختصاص نقش به کاربر</h2>
 
-<form asp-action="AssignRole" method="post">
-    <div>
-        <label for="userId">انتخاب کاربر:</label>
-        <select id="userId" name="userId" required>
-            @foreach (var user in Model)
-            {
-                <option value="@user.Id">@user.FirstName @user.LastName</option>
-            }
+<form asp-action="AssignRoleToUser">
+    <input type="hidden" asp-for="UserId" />
+
+    <div class="form-group">
+        <label for="roleName">نقش را انتخاب کنید:</label>
+        <select asp-for="SelectedRoles" asp-items="@(new SelectList(Model.AvailableRoles))" class="form-control" multiple>
         </select>
     </div>
 
-    <div>
-        <label for="roleName">انتخاب نقش:</label>
-        <select id="roleName" name="roleName" required>
-            @foreach (var role in ViewData["Roles"] as List<string>)
-            {
-                <option value="@role">@role</option>
-            }
-        </select>
-    </div>
-
-    <button type="submit">نسبت دادن نقش</button>
+    <button type="submit" class="btn btn-primary">اختصاص نقش</button>
 </form>
 
 @if (!ViewData.ModelState.IsValid)
 {
-    <div>
-        <h4>خطا ها:</h4>
-        <ul>
-            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-            {
-                <li>@error.ErrorMessage</li>
-            }
-        </ul>
-    </div>
+    foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-danger">@error.ErrorMessage</div>
+    }
 }

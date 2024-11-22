@@ -19,6 +19,9 @@
 
 
 
+
+
+
     // ایجاد نقش جدید
     public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
     {
@@ -59,16 +62,6 @@
 
 
 
-    // اختصاص نقش به کاربر
-    public async Task<IActionResult> AssignRoleToUser(string userId, string roleName)
-    {
-        var user = await _userManager.FindByIdAsync(userId);
-        await _userManager.AddToRoleAsync(user, roleName);
-        return RedirectToAction("Index");
-    }
-
-
-
 
 
 
@@ -94,5 +87,66 @@
 
         return RedirectToAction("Index");
     }
+
+
+
+
+
+
+    //  اختصاص نقش به کاربر
+    [HttpGet]
+    public async Task<IActionResult> AssignRoleToUser(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "کاربر پیدا نشد.");
+            return RedirectToAction("Index", "Roles"); // Redirect to the Roles index if the user is not found
+        }
+
+        var roles = _roleManager.Roles.ToList();
+        var model = new AssignRoleViewModel
+        {
+            UserId = userId,
+            AvailableRoles = roles.Select(r => r.Name).ToList() // Select role names
+        };
+
+        return View(model); // Pass the AssignRoleViewModel to the view
+    }
+
+    // اصلاح شده: اختصاص نقش به کاربر (POST)
+    [HttpPost]
+    public async Task<IActionResult> AssignRoleToUser(AssignRoleViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            var roles = _roleManager.Roles.ToList();
+            model.AvailableRoles = roles.Select(r => r.Name).ToList(); // Populate available roles if model state is invalid
+            return View(model);
+        }
+
+        var user = await _userManager.FindByIdAsync(model.UserId);
+        if (user == null)
+        {
+            ModelState.AddModelError(string.Empty, "کاربر پیدا نشد.");
+            return RedirectToAction("Index", "Roles");
+        }
+
+        // Add selected roles to the user
+        foreach (var role in model.SelectedRoles)
+        {
+            var result = await _userManager.AddToRoleAsync(user, role);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+        }
+
+        return RedirectToAction("Index", "Roles");
+    }
+
 
 }
