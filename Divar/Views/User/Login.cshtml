@@ -1,0 +1,32 @@
+﻿@model Divar.Models.LoginViewModel
+
+
+<link rel="stylesheet" href="~/css/Login.css" />
+<h2 class="text-center">ورود</h2>
+
+<form asp-action="Login" method="post" class="form-center">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group label-group">
+        <label asp-for="Email">ایمیل</label>
+        <input asp-for="Email" class="form-control input-large" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group label-group">
+        <label asp-for="Password">پسورد</label>
+        <input asp-for="Password" class="form-control input-large" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group form-check text-center d-flex justify-content-center align-items-center">
+        <input asp-for="RememberMe" class="form-check-input" style="margin-left: 5px;" />
+        <label class="form-check-label" asp-for="RememberMe">مرا به خاطر بسپار</label>
+    </div>
+    <button type="submit" class="btn btn-primary btn-md btn-success">ورود</button>
+</form>
+
+<br />
+
+<b>
+    <h4 style="text-align: center;">
+        اکانت ندارید؟<a asp-action="Register" asp-controller="User"> ثبت نام </a>
+    </h4>
+</b>

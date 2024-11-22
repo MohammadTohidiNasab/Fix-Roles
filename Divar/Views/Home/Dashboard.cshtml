@@ -1,0 +1,65 @@
+﻿@model List<Advertisement>
+
+
+@{
+    string FirstName = Context.Session.GetString("FirstName");
+    string LastName = Context.Session.GetString("LastName");
+    string FullName = $"{FirstName}  {LastName}";
+}
+
+<h1 style ="text-align: center;"> اگهی های شما</h1>
+<h3 style="text-align: center;" >@FullName </h3>
+<br />
+
+@if (Model.Count == 0)
+{
+    <p style="text-align: center;" >شما هیچ اگهی ای را ثبت نکرده اید</p>
+}
+else
+{
+    <div class="article-container">
+        @foreach (var ad in Model)
+        {
+            <div class="article">
+                <a style="text-decoration: none" asp-action="Detail" asp-route-id="@ad.Id">
+                    <h3>@ad.Title</h3>
+                    <p>@ad.Content</p>
+                    <p>قیمت: @ad.Price</p>
+                    <p>دسته بندی: @ad.Category</p>
+                </a>
+                <div class="article-actions">
+                    <a class="btn btn-primary" href="@Url.Action("Edit", new { id = ad.Id })">ویرایش</a>
+                    <a class="btn btn-danger" href="@Url.Action("Delete", new { id = ad.Id })">حذف</a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <div>
+        <nav>
+            <ul class="pagination d-flex justify-content-center">
+                @if (ViewBag.CurrentPage > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Dashboard", new { pageNumber = ViewBag.CurrentPage - 1 })">Previous</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Dashboard", new { pageNumber = i })">@i</a>
+                    </li>
+                }
+
+                @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Dashboard", new { pageNumber = ViewBag.CurrentPage + 1 })">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
+}

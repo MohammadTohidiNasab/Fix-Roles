@@ -1,0 +1,22 @@
+﻿@model Divar.Models.Advertisement
+
+
+<h3 style="text-align: center;">آیا از حذف کردن این اگهی مطمئن  هستید؟ </h3>
+<hr />
+<br />
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <h4>@Model.Title</h4>
+    <div style="text-align: center;">
+        <p>@Model.Content</p>
+        <p>قیمت: @Model.Price</p>
+        <p>دسته: @Model.Category</p>
+        <p>تاریخ انتشار: @Model.CreatedDate</p>
+    </div>
+
+    <form asp-action="Delete" method="post" style="text-align: center;">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger"> حذف </button>
+        <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+    </form>
+</div>

@@ -1,0 +1,149 @@
+﻿                                           مورد نیاز STORED-PROCEDURE  ساخت 
+
+
+
+ --    برای افزودن کامنت
+CREATE PROCEDURE sp_InsertComment
+    @Body NVARCHAR(400),
+    @CreatedDate DATETIME
+AS
+BEGIN
+    INSERT INTO Comments (Body, CreatedDate)
+    VALUES (@Body, @CreatedDate)
+END
+GO
+
+
+
+--  برای گرفتن لیست کاربران
+CREATE PROCEDURE GetUsers
+AS
+BEGIN
+    SELECT 
+        Id,
+        FirstName,
+        LastName,
+        PhoneNumber,
+        UserName,
+        NormalizedUserName,
+        Email,
+        NormalizedEmail,
+        PasswordHash,
+        SecurityStamp,
+        ConcurrencyStamp,
+        LockoutEnabled
+    FROM AspNetUsers;
+END
+GO
+
+
+
+
+--  برای گرفتن لیست آگهی‌ها
+CREATE PROCEDURE GetAdvertisements
+AS
+BEGIN
+    SELECT 
+        a.Id,
+        a.Title,
+        a.Content,
+        a.ImageUrl,
+        a.Price,
+        a.CreatedDate,
+        a.Category,
+        a.CustomUserId,
+        a.MobileBrand,
+        a.SimCardsNumber,
+        a.HomeSize,
+        a.HomeAddress,
+        a.BookAuthor,
+        a.CarBrand, 
+        a.GearboxType, 
+        u.FirstName AS UserFirstName,
+        u.LastName AS UserLastName
+    FROM 
+        Advertisements a
+    LEFT JOIN 
+        AspNetUsers u ON a.CustomUserId = u.Id;
+END
+GO
+
+
+
+
+--  برای گرفتن لیست کامنت‌ها
+CREATE PROCEDURE GetComments
+AS
+BEGIN
+    SELECT Id,Body,CreatedDate FROM Comments;
+END
+GO
+
+
+
+
+--  برای گرفتن کاربر بر اساس شناسه
+CREATE PROCEDURE GetUserById
+    @Id NVARCHAR(450)
+AS
+BEGIN
+    SELECT 
+        Id,
+        FirstName,
+        LastName,
+        PhoneNumber,
+        UserName,
+        NormalizedUserName,
+        Email,
+        NormalizedEmail,
+        PasswordHash,
+        SecurityStamp,
+        ConcurrencyStamp,
+        LockoutEnabled
+    FROM AspNetUsers WHERE Id = @Id;
+END
+GO
+
+
+
+
+--  برای حذف کاربر و آگهی‌های مربوط به آن
+CREATE PROCEDURE DeleteUserAndAdvertisements
+    @Id NVARCHAR(450)
+AS
+BEGIN
+    DELETE FROM Advertisements WHERE CustomUserId = @Id;
+    DELETE FROM AspNetUsers WHERE Id = @Id;
+END
+GO
+
+
+
+
+-- حذف کامنت
+CREATE PROCEDURE DeleteComment
+    @Id INT
+AS
+BEGIN
+    DELETE FROM Comments WHERE Id = @Id;
+END
+GO
+
+
+
+
+
+--اپدیت کامنت
+
+CREATE PROCEDURE sp_UpdateComment
+    @Id INT,
+    @Body NVARCHAR(400),
+    @UpdatedDate DATETIME
+AS
+BEGIN
+    UPDATE Comments
+    SET Body = @Body,
+        CreatedDate = @UpdatedDate
+    WHERE Id = @Id
+END
+GO

@@ -1,0 +1,33 @@
+﻿@model Divar.Models.Comment
+
+<div class="text-center my-4">
+    <h2>آیا مطمئن هستید که می‌خواهید این کامنت را حذف کنید؟</h2>
+    <hr />
+
+    <div class="mb-3">
+       <b>
+            <p>@Model.Body</p>
+        </b> 
+    </div>
+
+    <form asp-action="DeleteConfirmedComment" method="post" class="d-inline">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger mx-2">حذف</button>
+        <a asp-action="Index" class="btn btn-secondary mx-2">لغو</a>
+    </form>
+</div>
+
+<style>
+    .text-center {
+        text-align: center;
+    }
+
+    .my-4 {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+</style>

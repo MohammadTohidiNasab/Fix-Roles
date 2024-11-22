@@ -1,0 +1,42 @@
+form.form-center {
+    max-width: 700px;
+    margin: auto;
+    text-align: center;
+}
+
+.form-inline-group {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.label-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: 15px;
+    margin-left: 15px;
+}
+
+.input-small {
+    width: 250px;
+    height: 40px;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+button {
+    width: 200px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 20px;
+    background-color: green;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: darkgreen;
+    }

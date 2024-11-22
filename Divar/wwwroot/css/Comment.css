@@ -1,0 +1,59 @@
+﻿.button {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background-color: green;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+    .button:hover {
+        background-color: darkgreen;
+    }
+
+.button-container {
+    text-align: center; /* وسط‌چین کردن */
+    margin-top: 20px; /* فاصله از بالای صفحه */
+}
+
+.btn-success {
+    background-color: green; /* رنگ پس‌زمینه سبز */
+    color: white; /* رنگ متن سفید */
+}
+
+
+table {
+    width: 100%; /* تغییر به 100% */
+    max-width: 800px; /* یا یک مقدار بیشتر */
+    margin: 20px auto; /* مرکز کردن جدول */
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px; /* افزایش پدینگ */
+    text-align: center; /* مرکز چین کردن متن‌ها */
+    border: 1px solid #ddd;
+    font-size: 16px; /* افزایش اندازه فونت */
+    font-weight: bold; /* پررنگ کردن متن */
+}
+
+th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+td img {
+    max-width: 100px;
+    height: auto;
+}
+

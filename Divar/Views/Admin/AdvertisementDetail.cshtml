@@ -1,0 +1,98 @@
+﻿@model Advertisement
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> @Model.Title</title>
+    <link rel="stylesheet" href="~/css/detail.css">
+</head>
+
+
+<body>
+
+    <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="false" data-pause="hover">
+        <div class="carousel-inner">
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="carousel-item active">
+                    <img src="@Model.ImageUrl" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ImageUrl2))
+            {
+                <div class="carousel-item @(!string.IsNullOrEmpty(Model.ImageUrl) ? "" : "active")">
+                    <img src="@Model.ImageUrl2" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ImageUrl3))
+            {
+                <div class="carousel-item @((string.IsNullOrEmpty(Model.ImageUrl) && string.IsNullOrEmpty(Model.ImageUrl2)) ? "active" : "")">
+                    <img src="@Model.ImageUrl3" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                </div>
+            }
+        </div>
+        <a class="carousel-control-prev" href="#imageCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">قبلی</span>
+        </a>
+        <a class="carousel-control-next" href="#imageCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">بعدی</span>
+        </a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+    <h1 style="text-align: center" class="article-title"> @Model.Title</h1>
+    <p class="@Model.Content" style="text-align: center">
+        @Model.Content
+    </p>
+
+
+    @if (!string.IsNullOrEmpty(@Model.MobileBrand))
+    {
+        <h6 style="text-align: center"><b>برند موبایل:</b> @Model.MobileBrand</h6>
+    }
+    @if (@Model.SimCardsNumber != 0)
+    {
+        <h6 style="text-align: center"><b>تعداد سیم‌کارت‌ها:</b> @Model.SimCardsNumber</h6>
+    }
+    @if (@Model.HomeSize.HasValue)
+    {
+        <h6 style="text-align: center"><b>متراژ خانه:</b> @Model.HomeSize متر</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.HomeAddress))
+    {
+        <h6 style="text-align: center"><b>آدرس خانه:</b> @Model.HomeAddress</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.BookAuthor))
+    {
+        <h6 style="text-align: center"><b>نویسنده کتاب:</b> @Model.BookAuthor</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.CarBrand))
+    {
+        <h6 style="text-align: center"><b>برند ماشین:</b> @Model.CarBrand</h6>
+    }
+    @if (@Model.GearboxType.HasValue)
+    {
+        <h6 style="text-align: center"><b>نوع گیربکس:</b> @(Model.GearboxType.Value ? "اتوماتیک" : "دنده‌ای")</h6>
+    }
+
+
+    <h6 style="text-align: center"> <b>قیمت :</b>  @Model.Price  </h6>
+
+    <h6 style="text-align: center"> <b> نام منتشر کننده اگهی : </b>  @Model.CustomUser?.FirstName @Model.CustomUser?.LastName</h6>
+
+
+    <div class="button-group">
+        <a class="btn" asp-action="Index">بازگشت به لیست اگهی ها</a>
+        <a class="btn" asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Id">ویرایش اگهی</a>
+        <a class="btn btn-delete" asp-action="Delete" asp-controller="Home" asp-route-id="@Model.Id">حذف اگهی</a>
+    </div>
+</body>
+</html>
+

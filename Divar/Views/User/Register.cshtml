@@ -1,0 +1,56 @@
+﻿@model Divar.Models.RegisterViewModel
+
+<link rel="stylesheet" href="~/css/Register.css" />
+<h2 class="text-center">ثبت نام</h2>
+
+<form asp-action="Register" method="post" class="form-center">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group label-group">
+        <div class="form-inline-group">
+            <div class="label-group">
+                <label asp-for="LastName">نام خانوادگی</label>
+                <input asp-for="LastName" class="form-control input-small" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="label-group">
+                <label asp-for="FirstName">نام</label>
+                <input asp-for="FirstName" class="form-control input-small" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group label-group">
+        <div class="form-inline-group">
+
+            <div class="label-group">
+                <label asp-for="Email">ایمیل</label>
+                <input asp-for="Email" class="form-control input-small" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+
+            <div class="label-group">
+                <label asp-for="PhoneNumber">شماره تلفن</label>
+                <input asp-for="PhoneNumber" class="form-control input-small" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="form-group label-group">
+        <div class="form-inline-group">
+            <div class="label-group">
+                <label asp-for="ConfirmPassword">تایید رمز ورود</label>
+                <input asp-for="ConfirmPassword" class="form-control input-small" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="label-group">
+                <label asp-for="Password">رمز ورود</label>
+                <input asp-for="Password" class="form-control input-small" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success">ثبت نام</button>
+    </div>
+</form>

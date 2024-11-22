@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Divar.Models.Comment>
+<link href="~/css/Comment.css" rel="stylesheet" />
+<h2 style="text-align: center;">کامنت‌ها</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>شناسه</th>
+            <th>متن کامنت</th>
+            <th>تاریخ ثبت</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var comment in Model)
+        {
+            <tr>
+                <td>@comment.Id</td>
+                <td>@comment.Body</td>
+                <td>@comment.CreatedDate.ToString("yyyy/MM/dd HH:mm:ss")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="button-container">
+    <a asp-action="Index" asp-controller="Home" class="btn btn-secondary">انصراف</a>
+    <a class="button" asp-action="Create" asp-controller="Comment">اضافه کردن کامنت جدید</a>
+</div>

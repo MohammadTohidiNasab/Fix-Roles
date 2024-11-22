@@ -1,0 +1,303 @@
+﻿@model Divar.ViewModel.AdminPanel
+@{
+    Layout = null;
+    ViewData["Title"] = "Dashboard";
+}
+
+<link rel="stylesheet" href="~/css/admin.css">
+<br />
+<div style="text-align: center;">
+    <h1>   <a asp-controller="Home" asp-action="Index">بازگشت به سایت</a>  </h1>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <!-- دکمه‌ها برای اسکرول -->
+    <button onclick="scrollToSection('users')">لیست کاربران</button>
+    <button onclick="scrollToSection('comments')"> لیست کامنت‌ها</button>
+    <button> <a asp-action="Create" asp-controller="Home" style="text-decoration: none"> افزودن آگهی جدید</a>  ‌</button>
+
+</div>
+
+<div id="ads">
+    <h1 style="text-align: center;">لیست تمامی آگهی ها</h1>
+    <div class="similar-ads">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <td>
+                        <h1 style="text-align: center;">کتاب ها</h1>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>برای مشاهد اگهی روی کلیک کنید  Id</th>
+                                    <th>تیتر</th>
+                                    <th>محتوا</th>
+                                    <th>عکس</th>
+                                    <th>قیمت</th>
+                                    <th> تاریخ انتشار</th>
+                                    <th>نویسنده کتاب</th>
+                                    <th> کاربر منتشر کننده</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ad in Model.Advertisements.Where(a => a.Category == CategoryType.کتاب))
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("AdvertisementDetail", new { id = ad.Id })">@ad.Id</a>
+                                        </td>
+
+                                        <td>@ad.Title</td>
+                                        <td>@ad.Content</td>
+                                        <td><img src="@ad.ImageUrl" alt="Ad Image" style="width: 50px; height: 50px;" /></td>
+                                        <td>@ad.Price</td>
+                                        <td>@ad.CreatedDate</td>
+                                        <td>@ad.BookAuthor</td>
+                                        <td>@ad.CustomUser.FirstName  @ad.CustomUser.LastName</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h1 style="text-align: center;">خانه ها</h1>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>برای مشاهد اگهی روی کلیک کنید  Id</th>
+                                    <th>تیتر</th>
+                                    <th>محتوای اگهی</th>
+                                    <th>عکس</th>
+                                    <th>قیمت</th>
+                                    <th> تاریخ انتشار</th>
+                                    <th>متراژ خانه</th>
+                                    <th>ادرس</th>
+                                    <th> کاربر منتشر کننده</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ad in Model.Advertisements.Where(a => a.Category == CategoryType.خانه))
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("AdvertisementDetail", new { id = ad.Id })">@ad.Id</a>
+                                        </td>
+
+                                        <td>@ad.Title</td>
+                                        <td>@ad.Content</td>
+                                        <td><img src="@ad.ImageUrl" alt="Ad Image" style="width: 50px; height: 50px;" /></td>
+                                        <td>@ad.Price</td>
+                                        <td>@ad.CreatedDate</td>
+                                        <td>@ad.HomeSize</td>
+                                        <td>@ad.HomeAddress</td>
+                                        <td>@ad.CustomUser.FirstName  @ad.CustomUser.LastName</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h1 style="text-align: center;">موبایل ها</h1>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>برای مشاهد اگهی روی کلیک کنید  Id</th>
+                                    <th>تیتر</th>
+                                    <th>محتوای اگهی</th>
+                                    <th>عکس</th>
+                                    <th>قیمت</th>
+                                    <th> تاریخ انتشار</th>
+                                    <th>برند</th>
+                                    <th> تعداد سیم کارت</th>
+                                    <th> کاربر منتشر کننده</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ad in Model.Advertisements.Where(a => a.Category == CategoryType.موبایل))
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <a href="@Url.Action("AdvertisementDetail", new { id = ad.Id })">@ad.Id</a>
+                                        </td>
+
+                                        <td>@ad.Title</td>
+                                        <td>@ad.Content</td>
+                                        <td><img src="@ad.ImageUrl" alt="Ad Image" style="width: 50px; height: 50px;" /></td>
+                                        <td>@ad.Price</td>
+                                        <td>@ad.CreatedDate</td>
+                                        <td>@ad.MobileBrand</td>
+                                        <td>@ad.SimCardsNumber</td>
+                                        <td>@ad.CustomUser.FirstName  @ad.CustomUser.LastName</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h1 style="text-align: center;">ماشین ها</h1>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>برای مشاهد اگهی روی کلیک کنید  Id</th>
+                                    <th>تیتر</th>
+                                    <th>محتوای اگهی</th>
+                                    <th>عکس</th>
+                                    <th>قیمت</th>
+                                    <th> تاریخ انتشار</th>
+                                    <th>برند</th>
+                                    <th>نوع گیربکس</th>
+                                    <th> کاربر منتشر کننده</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ad in Model.Advertisements.Where(a => a.Category == CategoryType.ماشین))
+                                {
+                                    <tr>
+                                        <td>
+                                            <a href="@Url.Action("AdvertisementDetail", new { id = ad.Id })">@ad.Id</a>
+                                        </td>
+
+                                        <td>@ad.Title</td>
+                                        <td>@ad.Content</td>
+                                        <td><img src="@ad.ImageUrl" alt="Ad Image" style="width: 50px; height: 50px;" /></td>
+                                        <td>@ad.Price</td>
+                                        <td>@ad.CreatedDate</td>
+                                        <td>@ad.CarBrand</td>
+                                        <td>@(ad.GearboxType.GetValueOrDefault() ? "اتوماتیک" : "دنده‌ای")</td>
+                                        <td>@ad.CustomUser.FirstName  @ad.CustomUser.LastName</td>
+
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<br />
+<hr />
+<hr />
+<hr />
+<br />
+
+
+<div id="comments">
+    <h1 style="text-align: center;">لیست کامنت‌ها</h1>
+    <div style="text-align: center; margin-top: 20px;">
+        <!-- دکمه‌ها برای اسکرول -->
+        <button onclick="scrollToSection('ads')">لیست آگهی‌ها</button>
+        <button onclick="scrollToSection('users')">لیست کاربران</button>
+        <button> <a asp-action="Create" asp-controller="Comment" style="text-decoration: none">افزودن کامنت</a></button>
+
+    </div>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>محتوای کامنت</th>
+                <th> تاریخ انتشار</th>
+                <th>حذف </th>
+                <th>ویرایش</th> 
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comnt in Model.Comments)
+            {
+                <tr>
+                    <td>@comnt.Id</td>
+                    <td>@comnt.Body</td>
+                    <td>@comnt.CreatedDate</td>
+                    <td>
+                        <a asp-action="DeleteComment" asp-route-id="@comnt.Id" class="btn btn-danger btn-sm">حذف کامنت</a>
+                    </td>
+
+                    <td>
+                        <a asp-action="Edit" asp-controller="Comment" asp-route-id="@comnt.Id" class="btn btn-warning btn-sm">ویرایش کامنت</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+<br />
+<hr />
+<hr />
+<hr />
+<br />
+
+
+<div id="users">
+    <h1 style="text-align: center;">لیست کاربران</h1>
+    <div style="text-align: center; margin-top: 20px;">
+        <!-- دکمه‌ها برای اسکرول -->
+        <button onclick="scrollToSection('ads')">لیست آگهی‌ها</button>
+        <button onclick="scrollToSection('comments')"> لیست کامنت‌ها</button>
+        <button>  <a asp-action="Register" asp-controller="User" style="text-decoration: none">افزودن کاربر جدید </a>  </button>
+    </div>
+
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="submit"> <a asp-action="List" asp-controller="Roles" style="text-decoration: none">مدیریت نقش ها</a> </button>
+    </div>
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Id "برای حذف کاربر کلیک کنید"</th>
+                <th>نام</th>
+                <th>نام خانوادگی</th>
+                <th>ایمیل</th>
+                <th>شماره تلفن</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usr in Model.Users)
+            {
+                <tr>
+                    <td><a asp-action="DeleteUser" asp-route-id="@usr.Id">@usr.Id</a></td>
+                    <td>@usr.FirstName</td>
+                    <td>@usr.LastName</td>
+                    <td>@usr.Email</td>
+                    <td>@usr.PhoneNumber</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+
+
+
+<script>
+    function scrollToSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+</script>
+
+
+
+
+
+

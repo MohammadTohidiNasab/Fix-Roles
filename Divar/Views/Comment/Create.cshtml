@@ -1,0 +1,112 @@
+﻿@model Divar.Models.Comment
+
+<h2 style="text-align: center;"> افزودن کامنت</h2>
+
+<form asp-action="Create" method="post" id="commentForm" onsubmit="showLoading()">
+    <div class="form-group">
+        <label asp-for="Body" style="text-align: center; display: block;">از نظر شما متشکریم</label>
+        <textarea asp-for="Body" class="form-control"></textarea>
+        <span asp-validation-for="Body" class="text-danger"></span>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="submit" class="btn btn-success" style="margin-top: 10px;">اضافه کردن</button>
+        <a asp-action="Index" class="btn btn-secondary" style="margin-top: 10px; margin-left: 10px;">بازگشت به لیست</a>
+    </div>
+</form>
+
+<div id="loading" style="display:none; text-align: center;">
+    <p>در حال ارسال...</p>
+    <div class="loader"></div>
+</div>
+
+<style>
+    /* استایل برای کادر ورودی */
+    textarea {
+        width: 50%; /* عرض */
+        height: 100px; /* طول */
+        max-width: 600px; /* حداکثر عرض */
+        margin: 0 auto; /* مرکز کردن کادر */
+        display: block; /* نمایش به صورت بلاک */
+    }
+
+    /* استایل برای دکمه‌ها */
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white;
+        background-color: green;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-success {
+        background-color: green; /* رنگ پس‌زمینه سبز */
+        color: white; /* رنگ متن سفید */
+    }
+
+    .btn-secondary {
+        background-color: gray; /* رنگ پس‌زمینه خاکستری */
+        color: white; /* رنگ متن سفید */
+    }
+
+    /* مرکز کردن دکمه‌ها */
+    button, .btn {
+        margin: 10px;
+    }
+
+    .button-container {
+        text-align: center; /* وسط چین کردن */
+        margin-top: 20px; /* فاصله از بالای صفحه */
+    }
+
+    /* استایل برای جدول */
+    table {
+        width: 100%; /* تغییر به 100% */
+        max-width: 900px; /* یا یک مقدار بیشتر */
+        margin: 20px auto; /* مرکز کردن جدول */
+    }
+
+    th, td {
+        padding: 10px; /* افزایش پدینگ */
+        text-align: center; /* مرکز چین کردن متن‌ها */
+        border: 1px solid #ddd;
+        font-size: 16px; /* افزایش اندازه فونت */
+        font-weight: bold; /* پررنگ کردن متن */
+    }
+
+    th {
+        background-color: #f2f2f2;
+        color: #333;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    /* استایل برای لودینگ */
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto;
+    }
+
+
+</style>
+
+<script>
+    function showLoading() {
+        document.getElementById("loading").style.display = "block";
+        document.getElementById("commentForm").style.display = "none";
+    }
+</script>

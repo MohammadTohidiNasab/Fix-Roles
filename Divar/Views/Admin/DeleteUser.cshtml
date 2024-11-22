@@ -1,0 +1,56 @@
+﻿@model Divar.Models.CustomUser
+
+@{
+    ViewData["Title"] = "حذف کاربر";
+}
+
+@{
+    Layout = null;
+}
+
+
+<link rel="stylesheet" href="~/css/Layout.css" />
+<h1 style="text-align: center;">حذف کاربر</h1>
+
+<div style="text-align: center;">
+    <h2>  را حذف کنید؟ <strong>@Model.FirstName @Model.LastName</strong> آیا مطمئن هستید که می‌خواهید کاربر  </h2>
+
+    <form asp-action="Delete" method="post" style="display: inline-block;">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">حذف</button>
+        <a asp-action="Index" class="btn btn-secondary">لغو</a>
+    </form>
+</div>
+
+
+
+<style>
+
+    .button-group {
+        display: flex;
+        gap: 10px; /* فاصله بین دکمه‌ها */
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px; /* فضای داخلی دکمه */
+        background-color: #007BFF; /* رنگ پس‌زمینه دکمه */
+        color: white; /* رنگ متن */
+        text-decoration: none;
+        border-radius: 5px; /* گوشه‌های گرد */
+        transition: background-color 0.3s; /*_transition_ برای افکت تغییر رنگ */
+    }
+
+        .btn:hover {
+            background-color: #0056b3; /* رنگ دکمه هنگام هاور */
+        }
+
+    .btn-delete {
+        background-color: red; /* رنگ پس‌زمینه دکمه حذف */
+    }
+
+        .btn-delete:hover {
+            background-color: darkred; /* رنگ دکمه حذف هنگام هاور */
+        }
+
+</style>

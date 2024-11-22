@@ -1,8 +1,82 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿<div id="loader">
+    <h2>در حال بارگذاری...</h2>
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+
+@if (Context.Session.GetString("UserEmail") != null)
+{
+    <p>   خوش امدید : @Context.Session.GetString("FirstName")</p>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+<a asp-controller="Roles" asp-action="Index">اختصاص  نقش به کاربر </a>
+
+
+<div class="search-container">
+    <form method="get" asp-action="Search">
+        <input type="text" class="search-input" placeholder="جستجو..." aria-label="search" name="searchTerm" value="@ViewBag.CurrentSearchTerm" />
+        <input type="hidden" name="category" value="@ViewBag.CurrentCategory" />
+        <button type="submit" class="search-button">جستجو</button>
+    </form>
 </div>
+
+
+
+
+
+<main>
+    <div class="article-container">
+        @foreach (var advertisement in Model)
+        {
+            <div class="article">
+                <a style="text-decoration: none" asp-action="Detail" asp-route-id="@advertisement.Id">
+                    <img src="@advertisement.ImageUrl" alt="@advertisement.Title" />
+                    <h3>@advertisement.Title</h3>
+                </a>
+            </div>
+        }
+    </div>
+</main>
+
+<br />
+
+
+<div>
+    <nav>
+        <ul class="pagination d-flex justify-content-center">
+            @if (ViewBag.CurrentPage > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = ViewBag.CurrentPage - 1, category = ViewBag.CurrentCategory })">Previous</a>
+                </li>
+            }
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = i, category = ViewBag.CurrentCategory })">@i</a>
+                </li>
+            }
+
+            @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = ViewBag.CurrentPage + 1, category = ViewBag.CurrentCategory })">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<script>
+    window.addEventListener('load', function () {
+        document.getElementById('loader').style.display = 'none';
+    });
+
+    window.addEventListener('beforeunload', function () {
+        document.getElementById('loader').style.display = 'block';
+    });
+</script>

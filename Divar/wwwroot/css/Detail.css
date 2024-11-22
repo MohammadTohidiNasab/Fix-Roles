@@ -1,0 +1,92 @@
+﻿body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.article-image {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.article-title {
+    font-size: 24px;
+    margin: 20px 0 10px;
+    color: #333;
+}
+
+.article-description {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+}
+
+
+
+
+.button-group {
+    display: flex;
+    gap: 10px; /* فاصله بین دکمه‌ها */
+    justify-content: center; /* مرکز کردن در محور افقی */
+    align-items: center; /* مرکز کردن در محور عمودی (درصورت نیاز) */
+    flex-wrap: wrap; /* برای رفتن به خط بعدی در صورت نیاز */
+    margin: 20px 0; /* فضای اضافی در بالا و پایین */
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px; /* فضای داخلی دکمه */
+    background-color: #007BFF; /* رنگ پس‌زمینه دکمه */
+    color: white; /* رنگ متن */
+    text-decoration: none;
+    border-radius: 5px; /* گوشه‌های گرد */
+    transition: background-color 0.3s; /*_transition_ برای افکت تغییر رنگ */
+}
+
+    .btn:hover {
+        background-color: #0056b3; /* رنگ دکمه هنگام هاور */
+    }
+
+.btn-delete {
+    background-color: red; /* رنگ پس‌زمینه دکمه حذف */
+}
+
+    .btn-delete:hover {
+        background-color: darkred; /* رنگ دکمه حذف هنگام هاور */
+    }
+
+
+.carousel-inner img {
+    width: 100%; /* تعیین عرض تصویر به 100% */
+    height: auto; /* حفظ نسبت ابعاد */
+    border-radius: 8px; /* گوشه‌های گرد برای تصاویر */
+}
+
+
+
+.article-image {
+    max-width: 50%; /* تنظیم حداکثر عرض به 50% */
+    height: auto; /* حفظ نسبت ابعاد */
+    margin: 0 auto; /* مرکز‌چین کردن تصویر */
+}
+
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: black; /* رنگ پس زمینه */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    filter: invert(1); /* رنگ دکمه را معکوس می‌کند */
+}

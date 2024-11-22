@@ -1,0 +1,35 @@
+form.form-center {
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+}
+
+.label-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.input-large {
+    width: 350px; /* عرض کادر ورودی به 350 پیکسل تغییر یافته */
+}
+
+button, .btn-link {
+    margin-top: 20px;
+}
+
+.form-check {
+    text-align: center;
+}
+
+.btn-success {
+    background-color: green;
+    color: white;
+    width: 150px; /* عرض دکمه به 150 پیکسل تغییر یافته */
+    height: 40px; /* ارتفاع دکمه به 40 پیکسل تغییر یافته */
+}
+
+    .btn-success:hover {
+        background-color: darkgreen;
+    }
