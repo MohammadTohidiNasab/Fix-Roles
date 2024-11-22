@@ -20,24 +20,44 @@
 
 
     // ایجاد نقش جدید
-    public async Task<IActionResult> CreateRole(string roleName, List<AccessLevel> permissions)
+    public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
     {
-        var role = new IdentityRole(roleName);
-        await _roleManager.CreateAsync(role);
-
-        // تخصیص دسترسی‌ها به نقش
-        var roleEntity = new Role
+        if (ModelState.IsValid)
         {
-            Name = roleName,
-            Permissions = permissions
-        };
+            var role = new IdentityRole(model.RoleName);
+            var result = await _roleManager.CreateAsync(role);
 
-        // ذخیره کردن نقش با دسترسی‌ها در دیتابیس (مثال برای یک جدول موجود)
-        // _context.Roles.Add(roleEntity);
-        // await _context.SaveChangesAsync();
+            if (result.Succeeded)
+            {
+                // Convert selected permissions to AccessLevel list
+                var permissions = model.SelectedPermissions
+                    .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
+                    .ToList();
 
-        return RedirectToAction("Index");
+                var roleEntity = new Role
+                {
+                    Name = model.RoleName,
+                    Permissions = permissions
+                };
+
+                // _context.Roles.Add(roleEntity); // Uncomment when DbContext is available
+                // await _context.SaveChangesAsync(); // Uncomment when DbContext is available
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+        }
+
+        return View(model);
     }
+
+
 
     // اختصاص نقش به کاربر
     public async Task<IActionResult> AssignRoleToUser(string userId, string roleName)
