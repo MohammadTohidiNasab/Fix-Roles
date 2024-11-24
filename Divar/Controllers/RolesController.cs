@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-
-public class RolesController : Controller
+﻿public class RolesController : Controller
 {
     private readonly UserManager<CustomUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly DivarDbContext _context; 
 
-    public RolesController(UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager)
+    public RolesController(UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, DivarDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
+        _context = context; // Initialize _context
     }
 
 
@@ -42,8 +42,8 @@ public class RolesController : Controller
                     Permissions = permissions
                 };
 
-                // _context.Roles.Add(roleEntity); // Uncomment when DbContext is available
-                // await _context.SaveChangesAsync(); // Uncomment when DbContext is available
+                 _context.Roles.Add(roleEntity); // Uncomment when DbContext is available
+                 await _context.SaveChangesAsync(); // Uncomment when DbContext is available
 
                 return RedirectToAction("Index");
             }

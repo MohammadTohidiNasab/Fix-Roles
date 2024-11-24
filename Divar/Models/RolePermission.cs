@@ -1,8 +1,6 @@
 ﻿public class RolePermission
 {
     public int Id { get; set; }
-    public int RoleId { get; set; }
-    public string Permission { get; set; }
-
-    public Role Role { get; set; }
+    public string RoleId { get; set; } // لینک به IdentityRole
+    public AccessLevel Permission { get; set; } // نوع مجوز
 }

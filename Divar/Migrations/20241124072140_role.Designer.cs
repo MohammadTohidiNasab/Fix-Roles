@@ -4,6 +4,7 @@ using Divar.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Divar.Migrations
 {
     [DbContext(typeof(DivarDbContext))]
-    partial class DivarDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241124072140_role")]
+    partial class role
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -342,7 +345,7 @@ namespace Divar.Migrations
 
                     b.HasIndex("CustomUserId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Role");
                 });
 
             modelBuilder.Entity("RolePermission", b =>

@@ -14,7 +14,8 @@
         @foreach (var access in Enum.GetValues(typeof(AccessLevel)).Cast<AccessLevel>())
         {
             <div>
-                <input type="checkbox" name="SelectedPermissions" value="@access.ToString()" />
+                <input type="checkbox" name="SelectedPermissions" value="@access.ToString()"
+                @(Model.SelectedPermissions.Contains(access.ToString()) ? "checked" : "") />
                 <label>@access</label>
             </div>
         }
