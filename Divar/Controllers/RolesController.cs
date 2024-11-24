@@ -163,5 +163,67 @@ public class RolesController : Controller
 
         return RedirectToAction("Index");
     }
+
+
+
+
+
+
+
+
+
+    //ویرایش نقش ها
+
+    // GET: EditRole
+    public async Task<IActionResult> EditRole(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return NotFound();
+        }
+
+        var role = await _roleManager.FindByIdAsync(id);
+        if (role == null)
+        {
+            return NotFound();
+        }
+
+        // Load existing permissions if you have stored them somewhere
+        var permissions = new CreateRoleViewModel
+        {
+            RoleName = role.Name
+            // Assuming you have some logic to get permissions; for now, skip.
+            // SelectedPermissions = ... 
+        };
+
+        return View(permissions);
+    }
+
+    // POST: EditRole
+    [HttpPost]
+    public async Task<IActionResult> EditRole(CreateRoleViewModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var role = await _roleManager.FindByIdAsync(model.RoleName); // Assuming RoleName is the ID for simplicity
+            if (role != null)
+            {
+                role.Name = model.RoleName;
+
+                // Update permissions logic goes here if applicable
+
+                var result = await _roleManager.UpdateAsync(role);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+        }
+        return View(model);
+    }
 }
 

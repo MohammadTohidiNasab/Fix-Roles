@@ -24,6 +24,7 @@
                 <td>@role.Name</td>
                 <td>
                     <a asp-action="DeleteRole" asp-route-id="@role.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-warning">Edit</a>
                 </td>
             </tr>
         }

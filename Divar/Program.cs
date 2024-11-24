@@ -21,7 +21,7 @@ builder.Services.AddScoped<IUserRepository>(sp => new AdoUserRepository(cnnStrin
 
 
 
-
+//polecy
 builder.Services.AddAuthorization(options =>
 {
     foreach (AccessLevel level in Enum.GetValues(typeof(AccessLevel)))
