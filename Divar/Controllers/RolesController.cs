@@ -22,7 +22,6 @@
 
 
     // ایجاد نقش جدید
-    // ایجاد نقش جدید
     [HttpGet]
     public IActionResult CreateRole()
     {
@@ -69,11 +68,6 @@
 
 
 
-
-
-
-
-
     // حذف نقش
     public async Task<IActionResult> DeleteRole(string id)
     {
@@ -96,8 +90,6 @@
 
         return RedirectToAction("Index");
     }
-
-
 
 
 
@@ -177,11 +169,6 @@
 
 
 
-
-
-
-
-
     //ویرایش نقش ها
     public async Task<IActionResult> EditRole(string id)
     {
@@ -234,8 +221,7 @@
             .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
             .ToList();
 
-        // Update in the database, you might want to adjust this part depending 
-        // on how you are mapping role permissions in your database
+
         var roleEntity = await _context.Roles.FindAsync(id);
         if (roleEntity != null)
         {
@@ -261,7 +247,5 @@
     }
 
 }
-
-
 
 
