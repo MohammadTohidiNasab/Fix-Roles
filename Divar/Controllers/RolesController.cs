@@ -22,45 +22,51 @@
 
 
     // ایجاد نقش جدید
+    // ایجاد نقش جدید
+    [HttpGet]
+    public IActionResult CreateRole()
+    {
+        var model = new CreateRoleViewModel();
+        return View(model);
+    }
+
+    [HttpPost]
     public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var role = new IdentityRole(model.RoleName);
+            return View(model);
+        }
 
-            // تلاش جهت ساخت نقش
-            var result = await _roleManager.CreateAsync(role);
+        // Create the new role
+        var role = new Role { Name = model.RoleName };
 
-            if (result.Succeeded)
-            {
-                // تبدیل مجوزهای انتخاب‌شده به لیست AccessLevel
-                var permissions = model.SelectedPermissions
-                    .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
-                    .ToList();
+        // Optional: Add permissions if needed
+        if (model.SelectedPermissions != null && model.SelectedPermissions.Any())
+        {
+            var permissions = model.SelectedPermissions
+                .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
+                .ToList();
 
-                // ذخیره سازی اطلاعات نقش و مجوزها در DbContext
-                var roleEntity = new Role
-                {
-                    Name = model.RoleName,
-                    Permissions = permissions, // انتساب مجوزها
-                };
+            role.Permissions = permissions;
+        }
 
-                _context.Roles.Add(roleEntity);
-                await _context.SaveChangesAsync();
+        var result = await _roleManager.CreateAsync(role);
+        if (result.Succeeded)
+        {
+            return RedirectToAction("Index");
+        }
 
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
-            }
+        // If creating the role fails, add errors to the ModelState
+        foreach (var error in result.Errors)
+        {
+            ModelState.AddModelError(string.Empty, error.Description);
         }
 
         return View(model);
     }
+
+
 
 
 
@@ -253,7 +259,6 @@
 
         return View(model);
     }
-
 
 }
 

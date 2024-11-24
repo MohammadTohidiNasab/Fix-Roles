@@ -1,10 +1,8 @@
 ﻿@model CreateRoleViewModel
 
-<h2>Edit Role</h2>
+<h2>Create Role</h2>
 
-<form asp-action="EditRole" method="post">
-    <input type="hidden" asp-for="RoleName" />
-
+<form asp-action="CreateRole" method="post">
     <div>
         <label asp-for="RoleName"></label>
         <input asp-for="RoleName" />
@@ -16,13 +14,14 @@
         @foreach (AccessLevel permission in Enum.GetValues(typeof(AccessLevel)))
         {
             <div>
-                <input type="checkbox" name="SelectedPermissions" value="@permission" @(Model.SelectedPermissions.Contains(permission.ToString()) ? "checked" : "") />
+                <input type="checkbox" name="SelectedPermissions" value="@permission"
+                @(Model.SelectedPermissions.Contains(permission.ToString()) ? "checked" : "") />
                 <label>@permission</label>
             </div>
         }
     </div>
 
-    <button type="submit">Update Role</button>
+    <button type="submit">Create Role</button>
 </form>
 
 @section scripts {
