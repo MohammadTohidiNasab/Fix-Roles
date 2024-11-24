@@ -21,9 +21,6 @@ public class RolesController : Controller
 
 
 
-
-
-
     // ایجاد نقش جدید
     public async Task<IActionResult> CreateRole(CreateRoleViewModel model)
     {
@@ -64,12 +61,6 @@ public class RolesController : Controller
 
 
 
-    // ویرایش نقش ها
-
-
-
-   
-
 
 
 
@@ -102,8 +93,6 @@ public class RolesController : Controller
 
 
     //  اختصاص نقش به کاربر
-
-
     public IActionResult SelectUser()
     {
         // نمایش لیست کاربران برای انتخاب
@@ -175,5 +164,4 @@ public class RolesController : Controller
         return RedirectToAction("Index");
     }
 }
-
 
