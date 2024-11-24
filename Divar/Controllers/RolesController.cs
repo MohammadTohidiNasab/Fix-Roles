@@ -2,13 +2,13 @@
 {
     private readonly UserManager<CustomUser> _userManager;
     private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly DivarDbContext _context; 
+    private readonly DivarDbContext _context;
 
     public RolesController(UserManager<CustomUser> userManager, RoleManager<IdentityRole> roleManager, DivarDbContext context)
     {
         _userManager = userManager;
         _roleManager = roleManager;
-        _context = context; // Initialize _context
+        _context = context; 
     }
 
 
@@ -27,23 +27,26 @@
         if (ModelState.IsValid)
         {
             var role = new IdentityRole(model.RoleName);
+
+            // تلاش جهت ساخت نقش
             var result = await _roleManager.CreateAsync(role);
 
             if (result.Succeeded)
             {
-                // Convert selected permissions to AccessLevel list
+                // تبدیل مجوزهای انتخاب‌شده به لیست AccessLevel
                 var permissions = model.SelectedPermissions
                     .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
                     .ToList();
 
+                // ذخیره سازی اطلاعات نقش و مجوزها در DbContext
                 var roleEntity = new Role
                 {
                     Name = model.RoleName,
-                    Permissions = permissions
+                    Permissions = permissions, // انتساب مجوزها
                 };
 
-                 _context.Roles.Add(roleEntity); // Uncomment when DbContext is available
-                 await _context.SaveChangesAsync(); // Uncomment when DbContext is available
+                _context.Roles.Add(roleEntity);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index");
             }
@@ -58,6 +61,7 @@
 
         return View(model);
     }
+
 
 
 
@@ -173,13 +177,11 @@
 
 
     //ویرایش نقش ها
-
-    // GET: EditRole
     public async Task<IActionResult> EditRole(string id)
     {
         if (string.IsNullOrEmpty(id))
         {
-            return NotFound();
+            return BadRequest("Role ID cannot be null or empty.");
         }
 
         var role = await _roleManager.FindByIdAsync(id);
@@ -188,42 +190,73 @@
             return NotFound();
         }
 
-        // Load existing permissions if you have stored them somewhere
-        var permissions = new CreateRoleViewModel
+        // Get the existing permissions for the role
+        var existingPermissions = _context.Roles
+            .Where(r => r.Id == id)
+            .Select(r => r.Permissions)
+            .FirstOrDefault(); // Assuming you have only one Role object based on Id
+
+        var model = new CreateRoleViewModel
         {
-            RoleName = role.Name
-            // Assuming you have some logic to get permissions; for now, skip.
-            // SelectedPermissions = ... 
+            RoleName = role.Name,
+            SelectedPermissions = existingPermissions?.Select(p => p.ToString()).ToList() ?? new List<string>()
         };
 
-        return View(permissions);
+        return View(model);
     }
 
     // POST: EditRole
     [HttpPost]
-    public async Task<IActionResult> EditRole(CreateRoleViewModel model)
+    public async Task<IActionResult> EditRole(string id, CreateRoleViewModel model)
     {
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            var role = await _roleManager.FindByIdAsync(model.RoleName); // Assuming RoleName is the ID for simplicity
-            if (role != null)
+            return View(model);
+        }
+
+        var role = await _roleManager.FindByIdAsync(id);
+        if (role == null)
+        {
+            return NotFound();
+        }
+
+        // Update the role name
+        role.Name = model.RoleName;
+
+        // Update permissions
+        var permissions = model.SelectedPermissions
+            .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
+            .ToList();
+
+        // Update in the database, you might want to adjust this part depending 
+        // on how you are mapping role permissions in your database
+        var roleEntity = await _context.Roles.FindAsync(id);
+        if (roleEntity != null)
+        {
+            roleEntity.Permissions = permissions; // assuming this is configured correctly in your entity
+            _context.Roles.Update(roleEntity);
+        }
+
+        var result = await _roleManager.UpdateAsync(role);
+        if (result.Succeeded)
+        {
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            foreach (var error in result.Errors)
             {
-                role.Name = model.RoleName;
-
-                // Update permissions logic goes here if applicable
-
-                var result = await _roleManager.UpdateAsync(role);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+                ModelState.AddModelError(string.Empty, error.Description);
             }
         }
+
         return View(model);
     }
+
+
 }
+
+
+
 
