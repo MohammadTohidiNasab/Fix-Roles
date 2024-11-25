@@ -1,20 +1,13 @@
 ﻿@model IEnumerable<IdentityRole>
 
-<h2>Roles</h2>
+<h2 class="text-center">لیست نقش ها</h2>
 
-<p>
-    <a asp-action="CreateRole" class="btn btn-primary">Create New Role</a>
-</p>
-
-<p>
-    <a asp-action="SelectUser" class="btn btn-primary"> to user</a>
-</p>
-
-<table class="table">
+<table class="table table-bordered text-center">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Actions</th>
+            <th>نام نقش</th>
+            <th>عملیات</th>
+            <th>ویرایش</th>
         </tr>
     </thead>
     <tbody>
@@ -23,10 +16,36 @@
             <tr>
                 <td>@role.Name</td>
                 <td>
-                    <a asp-action="DeleteRole" asp-route-id="@role.Id" class="btn btn-danger">Delete</a>
-                    <a asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-warning">Edit</a>
+                    <a asp-action="DeleteRole" asp-route-id="@role.Id" class="btn btn-danger">حذف</a>
+                </td>
+                <td>
+                    <a asp-action="EditRole" asp-route-id="@role.Id" class="btn btn-warning">ویرایش</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+<div class="text-center">
+    <a asp-action="CreateRole" class="btn btn-primary">ایجاد نقش جدید</a>
+    <a asp-action="SelectUser" class="btn btn-primary">انتخاب کاربر</a>
+</div>
+
+<style>
+    .table {
+        border: 3px solid black; /* حاشیه جدول */
+        margin: 20px auto; /* مرکز کردن جدول */
+        width: 70%; /* عرض جدول */
+        font-size: 0.9em; /* کوچک‌تر کردن اندازه فونت */
+    }
+
+        .table th, .table td {
+            border: 2px solid black; /* حاشیه پررنگ برای سطر و ستون‌ها */
+            text-align: center; /* مرکز کردن متن */
+            padding: 5px; /* فواصل داخلی */
+        }
+
+    .btn {
+        margin: 0 5px; /* فاصله بین دکمه‌ها */
+    }
+</style>
