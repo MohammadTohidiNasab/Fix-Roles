@@ -1,4 +1,6 @@
-﻿namespace Divar.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Divar.Controllers
 {
     public class CommentController : Controller
     {
@@ -11,12 +13,14 @@
 
 
         // Create comment
+        [Authorize(Policy = "RequireCommentCreate")]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Policy = "RequireCommentCreate")]
         [HttpPost]
         public async Task<IActionResult> Create(Comment comment)
         {
@@ -41,6 +45,8 @@
 
 
         // Comment list
+        [Authorize(Policy = "RequireCommentIndex")]
+
         public async Task<IActionResult> Index()
         {
             var comments = new List<Comment>();
@@ -68,6 +74,7 @@
 
 
         // Edit comment
+        [Authorize(Policy = "RequireCommentEdit")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -99,6 +106,8 @@
             return View(comment);
         }
 
+
+        [Authorize(Policy = "RequireCommentEdit")]
         [HttpPost]
         public async Task<IActionResult> Edit(Comment comment)
         {

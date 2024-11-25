@@ -9,7 +9,9 @@ public class AdminController : Controller
         _adminRepository = adminRepository;
     }
 
-    [Authorize(Policy = "AdminIndex")]
+
+    //main page index
+    [Authorize(Policy = "RequireAdminAccess")]
     public async Task<IActionResult> Index()
     {
         var users = await _adminRepository.GetUsersAsync();
@@ -30,6 +32,7 @@ public class AdminController : Controller
 
 
     //حذف کاربر
+    [Authorize(Policy = "RequireDeleteUser")]
     public async Task<IActionResult> DeleteUser(string id)
     {
         var user = await _adminRepository.GetUserByIdAsync(id);
@@ -39,7 +42,8 @@ public class AdminController : Controller
         }
         return View(user);
     }
-
+    //تایید حذف کاربر
+    [Authorize(Policy = "RequireDeleteUser")]
     [HttpPost, ActionName("Delete")]
     public async Task<IActionResult> DeleteConfirmed(string id)
     {
@@ -50,9 +54,10 @@ public class AdminController : Controller
 
 
     // نمایش صفحه تأیید حذف کامنت
+    [Authorize(Policy = "RequireDeleteComment")]
     public async Task<IActionResult> DeleteComment(int id)
     {
-        var comment = await _adminRepository.GetCommentsAsync(); // فهرست کامنت‌ها برای یافتن کامنت با آیدی مشخص
+        var comment = await _adminRepository.GetCommentsAsync(); 
         var commentToDelete = comment.FirstOrDefault(c => c.Id == id);
 
         if (commentToDelete == null)
@@ -64,6 +69,7 @@ public class AdminController : Controller
     }
 
     // تأیید حذف کامنت
+    [Authorize(Policy = "RequireDeleteComment")]
     [HttpPost, ActionName("DeleteConfirmedComment")]
     public async Task<IActionResult> DeleteConfirmedComment(int id)
     {
@@ -71,10 +77,10 @@ public class AdminController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-
-
+    
 
     //جزییات اگهی
+    [Authorize(Policy = "RequireAdminAdvertisementDetail")]
     public async Task<IActionResult> AdvertisementDetail(int id)
     {
         var advertisement = await _adminRepository.GetAdvertisementsAsync();

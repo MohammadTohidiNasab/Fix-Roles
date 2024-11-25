@@ -1,4 +1,6 @@
-﻿namespace Divar.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Divar.Controllers
 {
     public class HomeController : Controller
     {
@@ -47,7 +49,11 @@
             return View(ad);
         }
 
+
+
+
         // To create Advertisement
+        [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -62,6 +68,8 @@
             return View(model);
         }
 
+
+        [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpPost]
         public async Task<IActionResult> Create(Advertisement advertisement)
         {
@@ -80,6 +88,8 @@
             return View(advertisement);
         }
 
+
+        [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult SelectCategory()
         {
@@ -87,6 +97,8 @@
             return View(categories);
         }
 
+
+        [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult SetCategory(CategoryType category)
         {
@@ -94,7 +106,10 @@
             return RedirectToAction("Create");
         }
 
+
+
         // Edit Advertisement
+        [Authorize(Policy = "RequireHomeEdit")]
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Advertisement updatedAdvertisement)
         {
@@ -126,6 +141,8 @@
             return View(updatedAdvertisement);
         }
 
+
+        [Authorize(Policy = "RequireHomeEdit")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -137,7 +154,11 @@
             return View(ad);
         }
 
+
+
+
         // Delete advertisements
+        [Authorize(Policy = "RequireHomeDelete")]
         public async Task<IActionResult> Delete(int id)
         {
             var ad = await _adRepository.GetAdvertisementByIdAsync(id);
@@ -150,6 +171,7 @@
         }
 
         // Delete Confirm
+        [Authorize(Policy = "RequireHomeDelete")]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

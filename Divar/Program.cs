@@ -24,7 +24,41 @@ builder.Services.AddScoped<IUserRepository>(sp => new AdoUserRepository(cnnStrin
 //polecy
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("AdminIndex", policy => policy.RequireClaim("Permission", AccessLevel.AdminIndex.ToString()));
+    options.AddPolicy("RequireAdminAccess", policy =>
+        policy.RequireClaim("Permission", AccessLevel.AdminIndex.ToString()));
+
+    options.AddPolicy("RequireDeleteUser", policy =>
+        policy.RequireClaim("Permission", AccessLevel.AdminDeleteUser.ToString()));
+
+    options.AddPolicy("RequireDeleteComment", policy =>
+        policy.RequireClaim("Permission", AccessLevel.AdminDeleteComment.ToString()));
+
+    options.AddPolicy("RequireAdminAdvertisementDetail", policy =>
+        policy.RequireClaim("Permission", AccessLevel.AdminAdvertisementDetail.ToString()));
+
+    options.AddPolicy("RequireCommentIndex", policy =>
+        policy.RequireClaim("Permission", AccessLevel.CommentIndex.ToString()));
+
+    options.AddPolicy("RequireCommentCreate", policy =>
+        policy.RequireClaim("Permission", AccessLevel.CommentCreate.ToString()));
+
+    options.AddPolicy("RequireCommentEdit", policy =>
+        policy.RequireClaim("Permission", AccessLevel.CommentEdit.ToString()));
+
+    options.AddPolicy("RequireHomeSelectCategory", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeSelectCategory.ToString()));
+
+    options.AddPolicy("RequireHomeEdit", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeEdit.ToString()));
+
+    options.AddPolicy("RequireHomeDelete", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeDelete.ToString()));
+
+    //options.AddPolicy("RequireUserRegister", policy =>
+    //    policy.RequireClaim("Permission", AccessLevel.UserRegister.ToString()));
+
+    //options.AddPolicy("RequireUserLogin", policy =>
+    //    policy.RequireClaim("Permission", AccessLevel.UserLogin.ToString()));
 });
 
 
