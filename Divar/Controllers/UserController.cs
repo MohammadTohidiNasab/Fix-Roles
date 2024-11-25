@@ -1,5 +1,9 @@
-﻿
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Divar.Controllers
 {
@@ -9,16 +13,19 @@ namespace Divar.Controllers
         private readonly UserManager<CustomUser> _userManager;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly DivarDbContext _context; // Add the context variable
 
         public UserController(IUserRepository userRepository,
                               UserManager<CustomUser> userManager,
                               SignInManager<CustomUser> signInManager,
-                              RoleManager<IdentityRole> roleManager)
+                              RoleManager<IdentityRole> roleManager,
+                              DivarDbContext context) // Inject DivarDbContext
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _context = context; // Assign it here
         }
 
         // Register (unchanged)
@@ -64,6 +71,7 @@ namespace Divar.Controllers
             return View();
         }
 
+        // Login (updated)
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -82,16 +90,20 @@ namespace Divar.Controllers
                     foreach (var userRole in userRoles)
                     {
                         authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+
+                        // Fetch the role to get its permissions
                         var role = await _roleManager.FindByNameAsync(userRole);
                         if (role != null)
                         {
-                            var roleClaims = await _roleManager.GetClaimsAsync(role);
-                            foreach (var roleClaim in roleClaims)
+                            var rolePermissions = _context.RolePermissions
+                                .Where(rp => rp.RoleId == role.Id)
+                                .Select(rp => rp.Permission.ToString()) // Get the permission as a string
+                                .ToList();
+
+                            // Add each permission as a separate claim
+                            foreach (var permission in rolePermissions)
                             {
-                                if (roleClaim.Type == "Permission")
-                                {
-                                    authClaims.Add(new Claim("Permission", roleClaim.Value));
-                                }
+                                authClaims.Add(new Claim("Permission", permission));
                             }
                         }
                     }
@@ -111,11 +123,44 @@ namespace Divar.Controllers
             return View(model);
         }
 
+
         // Logout (unchanged)
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+
+
+
+
+
+        // Profile
+        [HttpGet]
+        public IActionResult Profile()
+        {
+            var userClaims = User.Claims.Select(c => new
+            {
+                Type = c.Type,
+                Value = c.Value
+            }).ToList();
+
+            // دریافت سشن‌های مرتبط با کاربر
+            var sessionData = HttpContext.Session.Keys
+                .Select(key => new
+                {
+                    Key = key,
+                    Value = HttpContext.Session.GetString(key) // assuming the session values are stored as strings
+                }).ToList();
+
+            // ترکیب اطلاعات کاربر با سشن‌ها
+            var model = new
+            {
+                UserClaims = userClaims,
+                SessionData = sessionData
+            };
+
+            return View(model);
         }
     }
 }
