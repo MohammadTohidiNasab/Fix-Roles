@@ -24,10 +24,7 @@ builder.Services.AddScoped<IUserRepository>(sp => new AdoUserRepository(cnnStrin
 //polecy
 builder.Services.AddAuthorization(options =>
 {
-    foreach (AccessLevel level in Enum.GetValues(typeof(AccessLevel)))
-    {
-        options.AddPolicy(level.ToString(), policy => policy.RequireClaim("Permission", level.ToString()));
-    }
+    options.AddPolicy("AdminIndex", policy => policy.RequireClaim("Permission", AccessLevel.AdminIndex.ToString()));
 });
 
 

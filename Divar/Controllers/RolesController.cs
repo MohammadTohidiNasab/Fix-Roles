@@ -53,6 +53,19 @@
         var result = await _roleManager.CreateAsync(role);
         if (result.Succeeded)
         {
+            // Add RolePermissions after creating the role
+            foreach (var permission in role.Permissions)
+            {
+                var rolePermission = new RolePermission
+                {
+                    RoleId = role.Id,
+                    Permission = permission
+                };
+                await _context.RolePermissions.AddAsync(rolePermission);
+            }
+
+            await _context.SaveChangesAsync(); // save the changes
+
             return RedirectToAction("Index");
         }
 
@@ -64,6 +77,7 @@
 
         return View(model);
     }
+
 
 
 
