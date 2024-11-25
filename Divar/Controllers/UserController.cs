@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -9,26 +8,23 @@ namespace Divar.Controllers
 {
     public class UserController : Controller
     {
-        private readonly IUserRepository _userRepository;
         private readonly UserManager<CustomUser> _userManager;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly DivarDbContext _context; // Add the context variable
+        private readonly DivarDbContext _context;
 
-        public UserController(IUserRepository userRepository,
-                              UserManager<CustomUser> userManager,
+        public UserController(UserManager<CustomUser> userManager,
                               SignInManager<CustomUser> signInManager,
                               RoleManager<IdentityRole> roleManager,
-                              DivarDbContext context) // Inject DivarDbContext
+                              DivarDbContext context)
         {
-            _userRepository = userRepository;
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
-            _context = context; // Assign it here
+            _context = context;
         }
 
-        // Register (unchanged)
+        // Register controller
         [HttpGet]
         public IActionResult Register()
         {
@@ -40,45 +36,42 @@ namespace Divar.Controllers
         {
             if (ModelState.IsValid)
             {
-                var emailExists = await _userRepository.EmailExistsAsync(model.Email);
-                if (emailExists)
-                {
-                    ModelState.AddModelError("", "ایمیل قبلا ثبت شده است");
-                    return View(model);
-                }
-
                 var user = new CustomUser
                 {
-                    Id = Guid.NewGuid().ToString(),
                     UserName = model.Email,
                     Email = model.Email,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password) // رمزگذاری
+                    PhoneNumber = model.PhoneNumber
                 };
+                var result = await _userManager.CreateAsync(user, model.Password);
 
-                await _userRepository.AddUserAsync(user);
-                return RedirectToAction("Login", "User");
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
             return View(model);
         }
 
-        // Login (updated)
+        // Login controller
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        // Login (updated)
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.PasswordHash))
+                if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var userRoles = await _userManager.GetRolesAsync(user);
                     var authClaims = new List<Claim>
@@ -110,29 +103,31 @@ namespace Divar.Controllers
 
                     await _signInManager.SignInWithClaimsAsync(user, model.RememberMe, authClaims);
 
-                    HttpContext.Session.SetString("FirstName", user.FirstName ?? "");
-                    HttpContext.Session.SetString("LastName", user.LastName ?? "");
+                    // Set session variables
+                    HttpContext.Session.SetString("FirstName", user.FirstName);
+                    HttpContext.Session.SetString("LastName", user.LastName);
                     HttpContext.Session.SetString("UserEmail", user.Email);
                     HttpContext.Session.SetString("UserId", user.Id);
 
                     return RedirectToAction("Index", "Home");
                 }
 
-                ModelState.AddModelError(string.Empty, "ورود نامعتبر");
+                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             }
             return View(model);
         }
 
-
-        // Logout (unchanged)
-        public IActionResult Logout()
+        // Logout
+        public async Task<IActionResult> Logout()
         {
-            HttpContext.Session.Clear();
+            HttpContext.Session.Remove("FirstName");
+            HttpContext.Session.Remove("LastName");
+            HttpContext.Session.Remove("UserEmail");
+            HttpContext.Session.Remove("UserId");
+
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-
-
-
 
 
         // Profile
