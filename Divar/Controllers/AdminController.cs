@@ -11,7 +11,7 @@ public class AdminController : Controller
 
 
     //main page index
-    [Authorize(Policy = "RequireAdminAccess")]
+    //[Authorize(Policy = "RequireAdminAccess")]
     public async Task<IActionResult> Index()
     {
         var users = await _adminRepository.GetUsersAsync();

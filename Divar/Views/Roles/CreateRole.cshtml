@@ -1,34 +1,48 @@
-﻿@model CreateRoleViewModel
+﻿@{
+    Layout = null;
+}
+
+@model CreateRoleViewModel
 
 <div style="text-align: center;">
-    <h4>   <a asp-action="Index" asp-controller="Admin" style="text-decoration: none;">بازگشت به پنل ادمین</a>  </h4>
+    <h4><a asp-action="Index" asp-controller="Admin" style="text-decoration: none;">بازگشت به پنل ادمین</a></h4>
 </div>
 <hr>
 
-<h2> ساخت نقش جدید</h2>
+<h2 style="text-align: center;">ساخت نقش جدید</h2>
 
-<form asp-action="CreateRole" method="post">
-    <div>
-        <label asp-for="RoleName"></label>
-        <input asp-for="RoleName" />
-        <span asp-validation-for="RoleName"></span>
+<form asp-action="CreateRole" method="post" style="text-align: center; direction: rtl;">
+    <div style="margin: 10px auto; width: 40%;">
+        <label asp-for="RoleName" style="display: block; margin-bottom: 5px; font-size: 1.2em;">نام نقش:</label>
+        <input asp-for="RoleName" class="form-control" style="display: block; width: 100%; text-align: center; height: 3em;" />
+        <span asp-validation-for="RoleName" class="text-danger" style="display: block;"></span>
     </div>
 
-    <div>
-        <h3>Select Permissions</h3>
-        @foreach (AccessLevel permission in Enum.GetValues(typeof(AccessLevel)))
-        {
-            <div>
-                <input type="checkbox" name="SelectedPermissions" value="@permission"
-                @(Model.SelectedPermissions.Contains(permission.ToString()) ? "checked" : "") />
-                <label>@permission</label>
-            </div>
-        }
+    <div style="margin: 20px auto; width: 50%; text-align: center;">
+        <h3>انتخاب دسترسی‌ها</h3>
+        <table style="margin: 0 auto; border: 1px solid #ccc; border-collapse: collapse; width: 80%;">
+            <tbody>
+                @foreach (AccessLevel permission in Enum.GetValues(typeof(AccessLevel)))
+                {
+                    <tr style="border: 1px solid #ccc;">
+                        <td style="padding: 10px; border: 1px solid #ccc;">
+                            <label>@permission</label>
+                        </td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">
+                            <input type="checkbox" name="SelectedPermissions" value="@permission"
+                            @(Model.SelectedPermissions.Contains(permission.ToString()) ? "checked" : "") />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 
-    <button type="submit">Create Role</button>
+    <button type="submit" class="btn btn-success" style="margin-top: 20px; font-size: 1.2em; padding: 10px 20px; background-color: #28a745; color: white;">ساخت نقش</button>
+    <button type="submit" class="btn btn-secondary" style="margin-top: 20px; font-size: 1.2em; padding: 10px 20px; background-color: #6c757d; color: white;">  <a asp-action="Index" style="text-decoration: none;">بازگشت</a>  </button>
+
 </form>
 
-@section scripts {
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

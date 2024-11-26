@@ -12,7 +12,5 @@
         HomeSelectCategory,
         HomeEdit,
         HomeDelete,
-        UserRegister,
-        UserLogin,
     }
 }
