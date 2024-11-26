@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Net;
-using Microsoft.AspNetCore.Http;
-
-namespace Divar.Services
+﻿namespace Divar.Services
 {
     public class FtpService
     {
@@ -11,40 +6,10 @@ namespace Divar.Services
         private readonly string _ftpPassword = "12345";
         private readonly string _ftpPath = @"ftp://127.0.0.1/";
 
-        public List<string> GetFtpImageList()
-        {
-            var request = (FtpWebRequest)WebRequest.Create(_ftpPath);
-            request.Method = WebRequestMethods.Ftp.ListDirectory;
-            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
-            request.UsePassive = true;
-            request.KeepAlive = false;
-            request.EnableSsl = false;
-
-            var fileList = new List<string>();
-
-            try
-            {
-                using (var response = (FtpWebResponse)request.GetResponse())
-                using (var responseStream = response.GetResponseStream())
-                using (var reader = new StreamReader(responseStream))
-                {
-                    while (!reader.EndOfStream)
-                    {
-                        fileList.Add(reader.ReadLine());
-                    }
-                }
-            }
-            catch (WebException ex)
-            {
-                var response = (FtpWebResponse)ex.Response;
-                Console.WriteLine($"Error: {response.StatusDescription}");
-            }
-
-            return fileList;
-        }
 
 
 
+        //اپلود عکس
         public bool UploadImageToFtp(IFormFile file)
         {
             var uploadUrl = _ftpPath + file.FileName;
@@ -77,6 +42,9 @@ namespace Divar.Services
             }
         }
 
+
+
+        //حذف عکس
         public bool DeleteImageFromFtp(string fileName)
         {
             var deleteUrl = _ftpPath + fileName;
@@ -103,5 +71,54 @@ namespace Divar.Services
                 return false;
             }
         }
+
+
+
+
+
+
+
+        //لیست عکس ها
+        public List<string> GetFtpImageList()
+        {
+            var request = (FtpWebRequest)WebRequest.Create(_ftpPath);
+            request.Method = WebRequestMethods.Ftp.ListDirectory;
+            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+            request.UsePassive = true;
+            request.KeepAlive = false;
+            request.EnableSsl = false;
+
+            var fileList = new List<string>();
+
+            try
+            {
+                using (var response = (FtpWebResponse)request.GetResponse())
+                using (var responseStream = response.GetResponseStream())
+                using (var reader = new StreamReader(responseStream))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        fileList.Add(reader.ReadLine());
+                    }
+                }
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                Console.WriteLine($"Error: {response.StatusDescription}");
+            }
+
+            return fileList;
+        }
+
+        public string GetImageUrlForAdvertisement(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                return null;
+            }
+            return _ftpPath + imageUrl;
+        }
+
     }
 }

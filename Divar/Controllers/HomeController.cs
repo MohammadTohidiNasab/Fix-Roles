@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Divar.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Divar.Controllers
 {
@@ -6,10 +7,12 @@ namespace Divar.Controllers
     {
         private readonly IAdvertisementRepository _adRepository;
         private readonly int pageSize = 8;
+        private readonly FtpService _ftpService;
 
-        public HomeController(IAdvertisementRepository adRepository)
+        public HomeController(IAdvertisementRepository adRepository, FtpService ftpService)
         {
             _adRepository = adRepository;
+            _ftpService = ftpService;
         }
 
         // Show all advertisements
@@ -68,14 +71,41 @@ namespace Divar.Controllers
             return View(model);
         }
 
-
         [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpPost]
-        public async Task<IActionResult> Create(Advertisement advertisement)
+        public async Task<IActionResult> Create(Advertisement advertisement, IFormFile imageFile, IFormFile imageFile2, IFormFile imageFile3)
         {
             var userId = HttpContext.Session.GetString("UserId");
             if (ModelState.IsValid)
             {
+                // آپلود عکس‌ها به سرور FTP
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var result = _ftpService.UploadImageToFtp(imageFile);
+                    if (result)
+                    {
+                        advertisement.ImageUrl = imageFile.FileName;
+                    }
+                }
+
+                if (imageFile2 != null && imageFile2.Length > 0)
+                {
+                    var result = _ftpService.UploadImageToFtp(imageFile2);
+                    if (result)
+                    {
+                        advertisement.ImageUrl2 = imageFile2.FileName;
+                    }
+                }
+
+                if (imageFile3 != null && imageFile3.Length > 0)
+                {
+                    var result = _ftpService.UploadImageToFtp(imageFile3);
+                    if (result)
+                    {
+                        advertisement.ImageUrl3 = imageFile3.FileName;
+                    }
+                }
+
                 advertisement.CustomUserId = userId; // Use string for userId
                 advertisement.CreatedDate = DateTime.Now;
                 await _adRepository.AddAdvertisementAsync(advertisement);
@@ -87,6 +117,7 @@ namespace Divar.Controllers
             }
             return View(advertisement);
         }
+
 
 
         [Authorize(Policy = "RequireHomeSelectCategory")]
