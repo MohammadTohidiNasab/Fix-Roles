@@ -1,0 +1,22 @@
+﻿@model List<string>
+
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لیست تصاویر FTP</title>
+</head>
+<body>
+    <h1>لیست تصاویر</h1>
+    <div>
+        @foreach (var photo in Model)
+        {
+            <div>
+                <img src="@Url.Action("ViewImage", "Ftp", new { fileName = photo })" alt="@photo" style="max-width: 200px; max-height: 200px;" />
+                <p>@photo</p>
+            </div>
+        }
+    </div>
+</body>
+</html>
