@@ -67,7 +67,7 @@ namespace Divar.Controllers
 
 
         //ایجاد اگهی
-        [Authorize(Policy = "RequireHomeSelectCategory")]
+        //[Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -82,7 +82,7 @@ namespace Divar.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "RequireHomeSelectCategory")]
+       // [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpPost]
         public async Task<IActionResult> Create(Advertisement advertisement, IFormFile imageFile, IFormFile imageFile2, IFormFile imageFile3)
         {
@@ -136,7 +136,7 @@ namespace Divar.Controllers
 
 
         //انتخاب دسته بندی
-        [Authorize(Policy = "RequireHomeSelectCategory")]
+        //[Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult SelectCategory()
         {
@@ -145,7 +145,7 @@ namespace Divar.Controllers
         }
 
 
-        [Authorize(Policy = "RequireHomeSelectCategory")]
+        //[Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
         public IActionResult SetCategory(CategoryType category)
         {
@@ -156,7 +156,7 @@ namespace Divar.Controllers
 
 
         // Edit Advertisement
-        [Authorize(Policy = "RequireHomeEdit")]
+        //[Authorize(Policy = "RequireHomeEdit")]
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Advertisement updatedAdvertisement, IFormFile newImageFile1, IFormFile newImageFile2, IFormFile newImageFile3)
         {
@@ -196,7 +196,7 @@ namespace Divar.Controllers
             return View(updatedAdvertisement);
         }
 
-        [Authorize(Policy = "RequireHomeEdit")]
+        //[Authorize(Policy = "RequireHomeEdit")]
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -214,7 +214,7 @@ namespace Divar.Controllers
 
 
         // Delete advertisements
-        [Authorize(Policy = "RequireHomeDelete")]
+        //[Authorize(Policy = "RequireHomeDelete")]
         public async Task<IActionResult> Delete(int id)
         {
             var ad = await _adRepository.GetAdvertisementByIdAsync(id);
@@ -227,7 +227,7 @@ namespace Divar.Controllers
         }
 
         // Delete Confirm
-        [Authorize(Policy = "RequireHomeDelete")]
+       // [Authorize(Policy = "RequireHomeDelete")]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
