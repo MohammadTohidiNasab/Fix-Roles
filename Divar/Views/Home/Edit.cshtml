@@ -1,7 +1,12 @@
 ﻿@model Divar.Models.Advertisement
 
-<html dir="rtl">
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش آگهی</title>
+    <link rel="stylesheet" href="~/css/detail.css">
     <style>
         .form-center {
             max-width: 600px;
@@ -11,7 +16,6 @@
 
         .input-large {
             width: 100%;
-            height: 100%;
             margin: 10px auto;
             max-width: 800px;
         }
@@ -48,7 +52,7 @@
 
     <h2 class="text-center">ویرایش آگهی</h2>
 
-    <form asp-action="Edit" method="post" class="form-center" onsubmit="showLoader()">
+    <form asp-action="Edit" method="post" class="form-center" enctype="multipart/form-data" onsubmit="showLoader()">
         <input type="hidden" asp-for="Id" />
         <div class="form-group">
             <label asp-for="Title" class="text-center">تیتر</label>
@@ -65,20 +69,18 @@
             <input asp-for="Price" class="form-control input-large" type="number" />
             <span asp-validation-for="Price" class="text-danger"></span>
         </div>
+
         <div class="form-group">
-            <label asp-for="ImageUrl" class="text-center">لینک تصویر</label>
-            <input asp-for="ImageUrl" class="form-control input-large" />
-            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            <label class="text-center">تصویر اصلی</label>
+            <input type="file" name="newImageFile1" class="form-control-file" />
         </div>
         <div class="form-group">
-            <label asp-for="ImageUrl2" class="text-center">لینک تصویر 2</label>
-            <input asp-for="ImageUrl2" class="form-control input-large" />
-            <span asp-validation-for="ImageUrl2" class="text-danger"></span>
+            <label class="text-center">تصویر دوم</label>
+            <input type="file" name="newImageFile2" class="form-control-file" />
         </div>
         <div class="form-group">
-            <label asp-for="ImageUrl3" class="text-center">لینک تصویر 3</label>
-            <input asp-for="ImageUrl3" class="form-control input-large" />
-            <span asp-validation-for="ImageUrl3" class="text-danger"></span>
+            <label class="text-center">تصویر سوم</label>
+            <input type="file" name="newImageFile3" class="form-control-file" />
         </div>
 
         @if (Model.Category == Divar.Models.CategoryType.کتاب)
@@ -135,11 +137,11 @@
                 <span asp-validation-for="GearboxType" class="text-danger"></span>
             </div>
         }
+
         <br />
         <div class="text-center">
             <button type="submit" class="btn btn-primary">ذخیره</button>
             <a asp-action="Index" class="btn btn-secondary">انصراف</a>
-
         </div>
     </form>
 

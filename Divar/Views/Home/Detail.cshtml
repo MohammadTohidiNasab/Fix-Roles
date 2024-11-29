@@ -1,35 +1,32 @@
-﻿@model Advertisement
+﻿@model Divar.Models.Advertisement
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> @Model.Title</title>
+    <title>@Model.Title</title>
     <link rel="stylesheet" href="~/css/detail.css">
 </head>
-
-
 <body>
-
     <div id="imageCarousel" class="carousel slide" data-ride="carousel" data-interval="false" data-pause="hover">
         <div class="carousel-inner">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            @if (!string.IsNullOrEmpty(ViewBag.ImageUrl1))
             {
                 <div class="carousel-item active">
-                    <img src="@Model.ImageUrl" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                    <img src="@ViewBag.ImageUrl1" class="d-block w-100 article-image" alt="@ViewBag.ImageUrl1" loading="lazy">
                 </div>
             }
-            @if (!string.IsNullOrEmpty(Model.ImageUrl2))
+            @if (!string.IsNullOrEmpty(ViewBag.ImageUrl2))
             {
-                <div class="carousel-item @(!string.IsNullOrEmpty(Model.ImageUrl) ? "" : "active")">
-                    <img src="@Model.ImageUrl2" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                <div class="carousel-item">
+                    <img src="@ViewBag.ImageUrl2" class="d-block w-100 article-image" alt="@ViewBag.ImageUrl2" loading="lazy">
                 </div>
             }
-            @if (!string.IsNullOrEmpty(Model.ImageUrl3))
+            @if (!string.IsNullOrEmpty(ViewBag.ImageUrl3))
             {
-                <div class="carousel-item @((string.IsNullOrEmpty(Model.ImageUrl) && string.IsNullOrEmpty(Model.ImageUrl2)) ? "active" : "")">
-                    <img src="@Model.ImageUrl3" class="d-block w-100 article-image" alt="@Model.Title" loading="lazy">
+                <div class="carousel-item">
+                    <img src="@ViewBag.ImageUrl3" class="d-block w-100 article-image" alt="@ViewBag.ImageUrl3" loading="lazy">
                 </div>
             }
         </div>
@@ -43,64 +40,52 @@
         </a>
     </div>
 
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <h1 style="text-align: center" class="article-title">@Model.Title</h1>
+    <p style="text-align: center">@Model.Content</p>
 
+    @if (!string.IsNullOrEmpty(@Model.MobileBrand))
+    {
+        <h6 style="text-align: center"><b>برند موبایل:</b> @Model.MobileBrand</h6>
+    }
+    @if (@Model.SimCardsNumber != 0)
+    {
+        <h6 style="text-align: center"><b>تعداد سیم‌کارت‌ها:</b> @Model.SimCardsNumber</h6>
+    }
+    @if (@Model.HomeSize.HasValue)
+    {
+        <h6 style="text-align: center"><b>متراژ خانه:</b> @Model.HomeSize متر</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.HomeAddress))
+    {
+        <h6 style="text-align: center"><b>آدرس خانه:</b> @Model.HomeAddress</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.BookAuthor))
+    {
+        <h6 style="text-align: center"><b>نویسنده کتاب:</b> @Model.BookAuthor</h6>
+    }
+    @if (!string.IsNullOrEmpty(@Model.CarBrand))
+    {
+        <h6 style="text-align: center"><b>برند ماشین:</b> @Model.CarBrand</h6>
+    }
+    @if (@Model.GearboxType.HasValue)
+    {
+        <h6 style="text-align: center"><b>نوع گیربکس:</b> @(Model.GearboxType.Value ? "اتوماتیک" : "دنده‌ای")</h6>
+    }
 
-        <h1 style="text-align: center" class="article-title" > @Model.Title</h1>
-        <p class="@Model.Content" style="text-align: center">
-            @Model.Content
-        </p>
+    <h6 style="text-align: center"><b>قیمت:</b> @Model.Price تومان</h6>
+    <h6 style="text-align: center"><b>نام منتشر کننده آگهی:</b> @Model.CustomUser?.FirstName @Model.CustomUser?.LastName</h6>
+    <h6 style="text-align: center"><b>اطلاعات تماس:</b> @Model.CustomUser?.PhoneNumber</h6>
 
-
-        @if (!string.IsNullOrEmpty(@Model.MobileBrand))
-        {
-            <h6 style="text-align: center"><b>برند موبایل:</b> @Model.MobileBrand</h6>
-        }
-        @if (@Model.SimCardsNumber != 0)
-        {
-            <h6 style="text-align: center"><b>تعداد سیم‌کارت‌ها:</b> @Model.SimCardsNumber</h6>
-        }
-        @if (@Model.HomeSize.HasValue)
-        {
-            <h6 style="text-align: center"><b>متراژ خانه:</b> @Model.HomeSize متر</h6>
-        }
-        @if (!string.IsNullOrEmpty(@Model.HomeAddress))
-        {
-            <h6 style="text-align: center"><b>آدرس خانه:</b> @Model.HomeAddress</h6>
-        }
-        @if (!string.IsNullOrEmpty(@Model.BookAuthor))
-        {
-            <h6 style="text-align: center"><b>نویسنده کتاب:</b> @Model.BookAuthor</h6>
-        }
-        @if (!string.IsNullOrEmpty(@Model.CarBrand))
-        {
-            <h6 style="text-align: center"><b>برند ماشین:</b> @Model.CarBrand</h6>
-        }
-        @if (@Model.GearboxType.HasValue)
-        {
-            <h6 style="text-align: center"><b>نوع گیربکس:</b> @(Model.GearboxType.Value ? "اتوماتیک" : "دنده‌ای")</h6>
-        }
-
-
-        <h6 style="text-align: center"> <b>قیمت :</b>  @Model.Price  </h6>
-
-    <h6 style="text-align: center"> <b> نام منتشر کننده اگهی : </b>  @Model.CustomUser?.FirstName @Model.CustomUser?.LastName</h6>
-    <h6 style="text-align: center"><b> اطلاعات تماس :</b> @Model.CustomUser?.PhoneNumber</h6>
-
-
-        <div class="button-group">
-            <a class="btn" asp-action="Index">بازگشت به لیست اگهی ها</a>
+    <div class="button-group">
+        <a class="btn" asp-action="Index">بازگشت به لیست آگهی‌ها</a>
         @if (Context.Session.GetString("UserId") == Model.CustomUserId && Context.Session.GetString("UserEmail") != null)
-            {
-                <a class="btn" asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Id">ویرایش اگهی</a>
-                <a class="btn btn-delete" asp-action="Delete" asp-controller="Home" asp-route-id="@Model.Id">حذف اگهی</a>
-            }
-        </div>
-
-
-
+        {
+            <a class="btn" asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Id">ویرایش آگهی</a>
+            <a class="btn btn-delete" asp-action="Delete" asp-controller="Home" asp-route-id="@Model.Id">حذف آگهی</a>
+        }
     </div>
-</body>
-</html> 
 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

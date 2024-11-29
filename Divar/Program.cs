@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Divar.Services;
+
+var builder = WebApplication.CreateBuilder(args);
 
 var cnnString = builder.Configuration.GetConnectionString("DivarConnection");
 
@@ -17,8 +19,7 @@ builder.Services.AddIdentity<CustomUser, IdentityRole>()
 builder.Services.AddScoped<IAdminRepository>(sp => new AdoAdminRepository(cnnString));
 builder.Services.AddScoped<IAdvertisementRepository, EfAdvertisementRepository>();
 builder.Services.AddScoped<IUserRepository>(sp => new AdoUserRepository(cnnString));
-builder.Services.AddSingleton<Divar.Services.FtpService>();
-
+builder.Services.AddTransient<FtpService>();
 
 
 //polecy
