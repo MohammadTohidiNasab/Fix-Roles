@@ -11,3 +11,4 @@ global using System.Data.SqlClient;
 global using Divar.Repositories;
 global using Divar.DAL;
 global using System.Net;
+global using Divar.Services;

@@ -231,7 +231,6 @@ namespace Divar.Services
 
 
         // ویرایش تصاویر در سرور FTP
-        // ویرایش تصاویر در سرور FTP
         public void EditImages(int advertisementId, IFormFile newImageFile1, IFormFile newImageFile2, IFormFile newImageFile3, string oldImageUrl1, string oldImageUrl2, string oldImageUrl3)
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";

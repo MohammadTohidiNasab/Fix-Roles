@@ -82,9 +82,9 @@ namespace Divar.Controllers
             return View(model);
         }
 
-       // [Authorize(Policy = "RequireHomeSelectCategory")]
+        // [Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpPost]
-        public async Task<IActionResult> Create(Advertisement advertisement, IFormFile imageFile, IFormFile imageFile2, IFormFile imageFile3)
+        public async Task<IActionResult> Create(Advertisement advertisement, IFormFile? imageFile, IFormFile? imageFile2, IFormFile? imageFile3)
         {
             var userId = HttpContext.Session.GetString("UserId");
             if (ModelState.IsValid)
@@ -93,31 +93,29 @@ namespace Divar.Controllers
                 advertisement.CreatedDate = DateTime.Now;
                 await _adRepository.AddAdvertisementAsync(advertisement);
 
-                // آپلود عکس‌ها به سرور FTP
-                if (imageFile != null && imageFile.Length > 0)
+                // آپلود عکس‌ها به سرور FTP (فقط اگر فایل وجود داشته باشد)
+                List<IFormFile> imageFiles = new List<IFormFile> { imageFile, imageFile2, imageFile3 };
+                for (int i = 0; i < imageFiles.Count; i++)
                 {
-                    var result = _ftpService.UploadImageToFtp(imageFile, advertisement.Id);
-                    if (result)
+                    var image = imageFiles[i];
+                    if (image != null && image.Length > 0)
                     {
-                        advertisement.ImageUrl = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + imageFile.FileName;
-                    }
-                }
-
-                if (imageFile2 != null && imageFile2.Length > 0)
-                {
-                    var result = _ftpService.UploadImageToFtp(imageFile2, advertisement.Id);
-                    if (result)
-                    {
-                        advertisement.ImageUrl2 = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + imageFile2.FileName;
-                    }
-                }
-
-                if (imageFile3 != null && imageFile3.Length > 0)
-                {
-                    var result = _ftpService.UploadImageToFtp(imageFile3, advertisement.Id);
-                    if (result)
-                    {
-                        advertisement.ImageUrl3 = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + imageFile3.FileName;
+                        var result = _ftpService.UploadImageToFtp(image, advertisement.Id);
+                        if (result)
+                        {
+                            if (i == 0)
+                            {
+                                advertisement.ImageUrl = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + image.FileName;
+                            }
+                            else if (i == 1)
+                            {
+                                advertisement.ImageUrl2 = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + image.FileName;
+                            }
+                            else if (i == 2)
+                            {
+                                advertisement.ImageUrl3 = $"ftp://127.0.0.1/advertisement_{advertisement.Id}/" + image.FileName;
+                            }
+                        }
                     }
                 }
 
@@ -130,6 +128,8 @@ namespace Divar.Controllers
             }
             return View(advertisement);
         }
+
+
 
 
 
