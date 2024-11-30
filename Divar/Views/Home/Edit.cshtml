@@ -1,4 +1,5 @@
-﻿@model Divar.Models.Advertisement
+﻿@using System.IO;
+@model Divar.Models.Advertisement
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -8,20 +9,58 @@
     <title>ویرایش آگهی</title>
     <link rel="stylesheet" href="~/css/detail.css">
     <style>
-        .form-center {
-            max-width: 600px;
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
             margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .text-center {
             text-align: center;
         }
 
-        .input-large {
-            width: 100%;
-            margin: 10px auto;
-            max-width: 800px;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        .form-check {
-            text-align: center;
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group .form-control-file {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
         }
 
         .loader {
@@ -50,100 +89,119 @@
         <div class="spinner">در حال بارگذاری...</div>
     </div>
 
-    <h2 class="text-center">ویرایش آگهی</h2>
+    <div class="container">
+        <h2 class="text-center">ویرایش آگهی</h2>
 
-    <form asp-action="Edit" method="post" class="form-center" enctype="multipart/form-data" onsubmit="showLoader()">
-        <input type="hidden" asp-for="Id" />
-        <div class="form-group">
-            <label asp-for="Title" class="text-center">تیتر</label>
-            <input asp-for="Title" class="form-control input-large" />
-            <span asp-validation-for="Title" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Content" class="text-center">محتوای آگهی</label>
-            <textarea asp-for="Content" class="form-control input-large"></textarea>
-            <span asp-validation-for="Content" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Price" class="text-center">قیمت</label>
-            <input asp-for="Price" class="form-control input-large" type="number" />
-            <span asp-validation-for="Price" class="text-danger"></span>
-        </div>
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+            <input type="hidden" asp-for="Id" />
 
-        <div class="form-group">
-            <label class="text-center">تصویر اصلی</label>
-            <input type="file" name="newImageFile1" class="form-control-file" />
-        </div>
-        <div class="form-group">
-            <label class="text-center">تصویر دوم</label>
-            <input type="file" name="newImageFile2" class="form-control-file" />
-        </div>
-        <div class="form-group">
-            <label class="text-center">تصویر سوم</label>
-            <input type="file" name="newImageFile3" class="form-control-file" />
-        </div>
+            <div class="form-group">
+                <label asp-for="Title">تیتر</label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
 
-        @if (Model.Category == Divar.Models.CategoryType.کتاب)
-        {
             <div class="form-group">
-                <label asp-for="BookAuthor" class="text-center">نویسنده کتاب</label>
-                <input asp-for="BookAuthor" class="form-control input-large" />
-                <span asp-validation-for="BookAuthor" class="text-danger"></span>
+                <label asp-for="Content">محتوای آگهی</label>
+                <textarea asp-for="Content" class="form-control"></textarea>
+                <span asp-validation-for="Content" class="text-danger"></span>
             </div>
-        }
-        @if (Model.Category == Divar.Models.CategoryType.خانه)
-        {
+
             <div class="form-group">
-                <label asp-for="HomeSize" class="text-center">اندازه خانه</label>
-                <input asp-for="HomeSize" class="form-control input-large" />
-                <span asp-validation-for="HomeSize" class="text-danger"></span>
+                <label asp-for="Price">قیمت</label>
+                <input asp-for="Price" type="number" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="HomeAddress" class="text-center">آدرس خانه</label>
-                <input asp-for="HomeAddress" class="form-control input-large" />
-                <span asp-validation-for="HomeAddress" class="text-danger"></span>
+                <label>تصویر اصلی</label>
+                <input type="file" name="newImageFile1" class="form-control-file" />
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <div>نام فایل فعلی: @ViewBag.ImageFileName1</div>
+                }
             </div>
-        }
-        @if (Model.Category == Divar.Models.CategoryType.موبایل)
-        {
+
             <div class="form-group">
-                <label asp-for="MobileBrand" class="text-center">برند موبایل</label>
-                <input asp-for="MobileBrand" class="form-control input-large" />
-                <span asp-validation-for="MobileBrand" class="text-danger"></span>
+                <label>تصویر دوم</label>
+                <input type="file" name="newImageFile2" class="form-control-file" />
+                @if (!string.IsNullOrEmpty(Model.ImageUrl2))
+                {
+                    <div>نام فایل فعلی: @ViewBag.ImageFileName2</div>
+                }
             </div>
+
             <div class="form-group">
-                <label asp-for="SimCardsNumber" class="text-center">تعداد سیم‌کارت‌ها</label>
-                <input asp-for="SimCardsNumber" class="form-control input-large" />
-                <span asp-validation-for="SimCardsNumber" class="text-danger"></span>
+                <label>تصویر سوم</label>
+                <input type="file" name="newImageFile3" class="form-control-file" />
+                @if (!string.IsNullOrEmpty(Model.ImageUrl3))
+                {
+                    <div>نام فایل فعلی: @ViewBag.ImageFileName3</div>
+                }
             </div>
-        }
-        @if (Model.Category == Divar.Models.CategoryType.ماشین)
-        {
-            <div class="form-group">
-                <label asp-for="CarBrand" class="text-center">برند ماشین</label>
-                <input asp-for="CarBrand" class="form-control input-large" />
-                <span asp-validation-for="CarBrand" class="text-danger"></span>
-            </div>
-            <div class="form-group text-right">
-                <label class="text-center">نوع گیربکس</label>
-                <div class="form-check d-inline-flex align-items-center justify-content-center">
-                    <label class="form-check-label" for="automatic" style="margin-right: 5px;">اتوماتیک</label>
-                    <input class="form-check-input" type="radio" asp-for="GearboxType" value="true" id="automatic" style="margin-left: 5px;" />
+
+            @if (Model.Category == Divar.Models.CategoryType.کتاب)
+            {
+                <div class="form-group">
+                    <label asp-for="BookAuthor">نویسنده کتاب</label>
+                    <input asp-for="BookAuthor" class="form-control" />
+                    <span asp-validation-for="BookAuthor" class="text-danger"></span>
                 </div>
-                <div class="form-check d-inline-flex align-items-center justify-content-center">
-                    <label class="form-check-label" for="manual" style="margin-right: 5px;">دنده‌ای</label>
-                    <input class="form-check-input" type="radio" asp-for="GearboxType" value="false" id="manual" style="margin-left: 5px;" />
+            }
+            @if (Model.Category == Divar.Models.CategoryType.خانه)
+            {
+                <div class="form-group">
+                    <label asp-for="HomeSize">اندازه خانه</label>
+                    <input asp-for="HomeSize" class="form-control" />
+                    <span asp-validation-for="HomeSize" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="GearboxType" class="text-danger"></span>
-            </div>
-        }
+                <div class="form-group">
+                    <label asp-for="HomeAddress">آدرس خانه</label>
+                    <input asp-for="HomeAddress" class="form-control" />
+                    <span asp-validation-for="HomeAddress" class="text-danger"></span>
+                </div>
+            }
+            @if (Model.Category == Divar.Models.CategoryType.موبایل)
+            {
+                <div class="form-group">
+                    <label asp-for="MobileBrand">برند موبایل</label>
+                    <input asp-for="MobileBrand" class="form-control" />
+                    <span asp-validation-for="MobileBrand" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="SimCardsNumber">تعداد سیم‌کارت‌ها</label>
+                    <input asp-for="SimCardsNumber" class="form-control" />
+                    <span asp-validation-for="SimCardsNumber" class="text-danger"></span>
+                </div>
+            }
+            @if (Model.Category == Divar.Models.CategoryType.ماشین)
+            {
+                <div class="form-group">
+                    <label asp-for="CarBrand">برند ماشین</label>
+                    <input asp-for="CarBrand" class="form-control" />
+                    <span asp-validation-for="CarBrand" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label>نوع گیربکس</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="true" id="automatic" />
+                        <label class="form-check-label" for="automatic">اتوماتیک</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="false" id="manual" />
+                        <label class="form-check-label" for="manual">دنده‌ای</label>
+                    </div>
+                    <span asp-validation-for="GearboxType" class="text-danger"></span>
+                </div>
+            }
 
-        <br />
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">ذخیره</button>
-            <a asp-action="Index" class="btn btn-secondary">انصراف</a>
-        </div>
-    </form>
+            <br />
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">ذخیره</button>
+                <a asp-action="Index" class="btn btn-secondary">انصراف</a>
+            </div>
+        </form>
+    </div>
 
     <script>
         function showLoader() {

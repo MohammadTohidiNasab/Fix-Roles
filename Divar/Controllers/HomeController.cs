@@ -152,6 +152,12 @@
 
 
 
+
+
+
+
+
+
         // Edit Advertisement
         //[Authorize(Policy = "RequireHomeEdit")]
         [HttpPost]
@@ -220,6 +226,12 @@
             {
                 return NotFound();
             }
+
+            // ارسال نام فایل‌ها به ویو
+            ViewBag.ImageFileName1 = Path.GetFileName(ad.ImageUrl);
+            ViewBag.ImageFileName2 = Path.GetFileName(ad.ImageUrl2);
+            ViewBag.ImageFileName3 = Path.GetFileName(ad.ImageUrl3);
+
             return View(ad);
         }
 
