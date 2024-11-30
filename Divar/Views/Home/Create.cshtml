@@ -95,18 +95,19 @@
                     <span asp-validation-for="CarBrand" class="text-danger"></span>
                 </div>
                 <br />
-                <div class="form-group text-right">
-                    <label class="text-right">نوع گیربکس</label>
-                    <div class="form-check d-inline-flex align-items-center justify-content-center">
-                        <label class="form-check-label" for="automatic" style="margin-right: 5px;">اتوماتیک</label>
-                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="true" id="automatic" style="margin-left: 5px;" />
+                <div class="form-group">
+                    <label>نوع گیربکس</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="true" id="automatic" />
+                        <label class="form-check-label" for="automatic">اتوماتیک</label>
                     </div>
-                    <div class="form-check d-inline-flex align-items-center justify-content-center">
-                        <label class="form-check-label" for="manual" style="margin-right: 5px;">دنده‌ای</label>
-                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="false" id="manual" style="margin-left: 5px;" />
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" asp-for="GearboxType" value="false" id="manual" />
+                        <label class="form-check-label" for="manual">دنده‌ای</label>
                     </div>
                     <span asp-validation-for="GearboxType" class="text-danger"></span>
                 </div>
+
             }
 
             <br />
