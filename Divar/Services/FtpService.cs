@@ -235,67 +235,58 @@ namespace Divar.Services
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
 
-            // حذف تصاویر قدیمی
-            if (!string.IsNullOrEmpty(oldImageUrl1))
-            {
-                DeleteImage(oldImageUrl1);
-            }
-            if (!string.IsNullOrEmpty(oldImageUrl2))
-            {
-                DeleteImage(oldImageUrl2);
-            }
-            if (!string.IsNullOrEmpty(oldImageUrl3))
-            {
-                DeleteImage(oldImageUrl3);
-            }
-
-            // آپلود تصاویر جدید
+            // آپلود و جایگزینی تصاویر جدید
             if (newImageFile1 != null && newImageFile1.Length > 0)
             {
+                if (!string.IsNullOrEmpty(oldImageUrl1))
+                {
+                    DeleteImage(oldImageUrl1);
+                }
                 UploadImageToFtp(newImageFile1, advertisementId);
             }
 
             if (newImageFile2 != null && newImageFile2.Length > 0)
             {
+                if (!string.IsNullOrEmpty(oldImageUrl2))
+                {
+                    DeleteImage(oldImageUrl2);
+                }
                 UploadImageToFtp(newImageFile2, advertisementId);
             }
 
             if (newImageFile3 != null && newImageFile3.Length > 0)
             {
+                if (!string.IsNullOrEmpty(oldImageUrl3))
+                {
+                    DeleteImage(oldImageUrl3);
+                }
                 UploadImageToFtp(newImageFile3, advertisementId);
-            }
-
-            // حذف تصویر از سرور FTP
-            void DeleteImage(string imageUrl)
-            {
-                var request = (FtpWebRequest)WebRequest.Create(imageUrl);
-                request.Method = WebRequestMethods.Ftp.DeleteFile;
-                request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
-                request.UsePassive = true;
-                request.KeepAlive = false;
-                request.EnableSsl = false;
-
-                try
-                {
-                    using (var response = (FtpWebResponse)request.GetResponse())
-                    {
-                        Console.WriteLine($"Deleted Image: {imageUrl}, status {response.StatusDescription}");
-                    }
-                }
-                catch (WebException ex)
-                {
-                    var response = (FtpWebResponse)ex.Response;
-                    Console.WriteLine($"Error: {response.StatusDescription}");
-                }
             }
         }
 
+        // حذف تصویر از سرور FTP
+        public void DeleteImage(string imageUrl)
+        {
+            var request = (FtpWebRequest)WebRequest.Create(imageUrl);
+            request.Method = WebRequestMethods.Ftp.DeleteFile;
+            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+            request.UsePassive = true;
+            request.KeepAlive = false;
+            request.EnableSsl = false;
 
-
-
-
-
-
+            try
+            {
+                using (var response = (FtpWebResponse)request.GetResponse())
+                {
+                    Console.WriteLine($"Deleted Image: {imageUrl}, status {response.StatusDescription}");
+                }
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                Console.WriteLine($"Error: {response.StatusDescription}");
+            }
+        }
 
     }
 }

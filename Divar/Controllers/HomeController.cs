@@ -1,7 +1,4 @@
-﻿using Divar.Services;
-using Microsoft.AspNetCore.Authorization;
-
-namespace Divar.Controllers
+﻿namespace Divar.Controllers
 {
     public class HomeController : Controller
     {
@@ -158,7 +155,7 @@ namespace Divar.Controllers
         // Edit Advertisement
         //[Authorize(Policy = "RequireHomeEdit")]
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Advertisement updatedAdvertisement, IFormFile newImageFile1, IFormFile newImageFile2, IFormFile newImageFile3)
+        public async Task<IActionResult> Edit(int id, Advertisement updatedAdvertisement, IFormFile? newImageFile1, IFormFile? newImageFile2, IFormFile? newImageFile3)
         {
             if (ModelState.IsValid)
             {
@@ -168,17 +165,11 @@ namespace Divar.Controllers
                     return NotFound();
                 }
 
-                var oldImageUrl1 = ad.ImageUrl;
-                var oldImageUrl2 = ad.ImageUrl2;
-                var oldImageUrl3 = ad.ImageUrl3;
-
+                // به‌روزرسانی فیلدهای آگهی
                 ad.Title = updatedAdvertisement.Title;
                 ad.Content = updatedAdvertisement.Content;
                 ad.Price = updatedAdvertisement.Price;
-                ad.ImageUrl = updatedAdvertisement.ImageUrl;
-                ad.ImageUrl2 = updatedAdvertisement.ImageUrl2;
-                ad.ImageUrl3 = updatedAdvertisement.ImageUrl3;
-                // Custom properties
+                // سایر خصوصیات سفارشی
                 ad.SimCardsNumber = updatedAdvertisement.SimCardsNumber;
                 ad.MobileBrand = updatedAdvertisement.MobileBrand;
                 ad.BookAuthor = updatedAdvertisement.BookAuthor;
@@ -188,13 +179,37 @@ namespace Divar.Controllers
                 ad.HomeSize = updatedAdvertisement.HomeSize;
 
                 // ویرایش تصاویر در سرور FTP
-                _ftpService.EditImages(ad.Id, newImageFile1, newImageFile2, newImageFile3, oldImageUrl1, oldImageUrl2, oldImageUrl3);
+                if (newImageFile1 != null && newImageFile1.Length > 0)
+                {
+                    var oldImageUrl1 = ad.ImageUrl;
+                    _ftpService.UploadImageToFtp(newImageFile1, ad.Id);
+                    ad.ImageUrl = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile1.FileName;
+                    _ftpService.DeleteImage(oldImageUrl1); // حذف تصویر قدیمی
+                }
+
+                if (newImageFile2 != null && newImageFile2.Length > 0)
+                {
+                    var oldImageUrl2 = ad.ImageUrl2;
+                    _ftpService.UploadImageToFtp(newImageFile2, ad.Id);
+                    ad.ImageUrl2 = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile2.FileName;
+                    _ftpService.DeleteImage(oldImageUrl2); // حذف تصویر قدیمی
+                }
+
+                if (newImageFile3 != null && newImageFile3.Length > 0)
+                {
+                    var oldImageUrl3 = ad.ImageUrl3;
+                    _ftpService.UploadImageToFtp(newImageFile3, ad.Id);
+                    ad.ImageUrl3 = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile3.FileName;
+                    _ftpService.DeleteImage(oldImageUrl3); // حذف تصویر قدیمی
+                }
 
                 await _adRepository.UpdateAdvertisementAsync(ad);
                 return RedirectToAction(nameof(Index));
             }
             return View(updatedAdvertisement);
         }
+
+
 
         //[Authorize(Policy = "RequireHomeEdit")]
         [HttpGet]
