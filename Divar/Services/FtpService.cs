@@ -87,6 +87,11 @@ namespace Divar.Services
             {
                 Directory.CreateDirectory(localDirectoryPath);
             }
+            else
+            {
+                // حذف تصاویر قدیمی در لوکال
+                Directory.GetFiles(localDirectoryPath).ToList().ForEach(File.Delete);
+            }
 
             var imageUrls = new List<string>();
 
@@ -128,6 +133,7 @@ namespace Divar.Services
 
             return (imageUrl1, imageUrl2, imageUrl3);
         }
+
 
         // دانلود فایل از FTP
         private void DownloadImage(string remoteFileUrl, string localFileUrl)
@@ -234,35 +240,32 @@ namespace Divar.Services
         public void EditImages(int advertisementId, IFormFile newImageFile1, IFormFile newImageFile2, IFormFile newImageFile3, string oldImageUrl1, string oldImageUrl2, string oldImageUrl3)
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
+            var localDirectoryPath = _localPath + $"advertisement_{advertisementId}/";
+
+            // حذف تصاویر قدیمی در لوکال
+            if (Directory.Exists(localDirectoryPath))
+            {
+                // حذف فایل‌ها
+                Directory.GetFiles(localDirectoryPath).ToList().ForEach(File.Delete);
+            }
 
             // آپلود و جایگزینی تصاویر جدید
             if (newImageFile1 != null && newImageFile1.Length > 0)
             {
-                if (!string.IsNullOrEmpty(oldImageUrl1))
-                {
-                    DeleteImage(oldImageUrl1);
-                }
                 UploadImageToFtp(newImageFile1, advertisementId);
             }
 
             if (newImageFile2 != null && newImageFile2.Length > 0)
             {
-                if (!string.IsNullOrEmpty(oldImageUrl2))
-                {
-                    DeleteImage(oldImageUrl2);
-                }
                 UploadImageToFtp(newImageFile2, advertisementId);
             }
 
             if (newImageFile3 != null && newImageFile3.Length > 0)
             {
-                if (!string.IsNullOrEmpty(oldImageUrl3))
-                {
-                    DeleteImage(oldImageUrl3);
-                }
                 UploadImageToFtp(newImageFile3, advertisementId);
             }
         }
+
 
         // حذف تصویر از سرور FTP
         public void DeleteImage(string imageUrl)
