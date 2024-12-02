@@ -264,7 +264,6 @@ namespace Divar.Controllers
                 .Select(p => (AccessLevel)Enum.Parse(typeof(AccessLevel), p))
                 .ToList();
 
-
             var roleEntity = await _context.Roles.FindAsync(id);
             if (roleEntity != null)
             {
@@ -276,6 +275,32 @@ namespace Divar.Controllers
             if (result.Succeeded)
             {
                 await _context.SaveChangesAsync();
+
+                // Update claims for all users with this role
+                var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+                foreach (var user in usersInRole)
+                {
+                    if (User.Identity.IsAuthenticated)
+                    {
+                        // Remove all existing claims
+                        var existingClaims = await _userManager.GetClaimsAsync(user);
+                        await _userManager.RemoveClaimsAsync(user, existingClaims);
+
+                        // Add new claims based on the updated roles
+                        var newClaims = new List<Claim>();
+                        foreach (var permission in permissions)
+                        {
+                            newClaims.Add(new Claim("Permission", permission.ToString()));
+                        }
+
+                        // Add the new claims
+                        await _userManager.AddClaimsAsync(user, newClaims);
+
+                        // Update the user's sign-in with the new claims
+                        await _signInManager.RefreshSignInAsync(user);
+                    }
+                }
+
                 return RedirectToAction("Index");
             }
             else
@@ -288,6 +313,7 @@ namespace Divar.Controllers
 
             return View(model);
         }
+
 
     }
 }
