@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
 namespace Divar.Services
@@ -12,13 +14,11 @@ namespace Divar.Services
         private readonly string _ftpPath = @"ftp://127.0.0.1/";
         private readonly string _localPath = @"wwwroot/uploads/";
 
-        // اپلود عکس
         public bool UploadImageToFtp(IFormFile file, int advertisementId)
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
             var uploadUrl = directoryPath + file.FileName;
 
-            // Create directory if not exists
             CreateDirectoryIfNotExists(directoryPath);
 
             var request = (FtpWebRequest)WebRequest.Create(uploadUrl);
@@ -45,12 +45,49 @@ namespace Divar.Services
             catch (WebException ex)
             {
                 var response = (FtpWebResponse)ex.Response;
-                Console.WriteLine($"خطا: {response.StatusDescription}");
+                Console.WriteLine($"Error: {response.StatusDescription}");
                 return false;
             }
         }
 
-        // ایجاد دایرکتوری در صورت عدم وجود
+        public async Task<string> UploadImageToFtpAsync(IFormFile file, int advertisementId, int imageNumber)
+        {
+            var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
+            var fileName = $"image{imageNumber}_{file.FileName}";
+            var uploadUrl = directoryPath + fileName;
+
+            await CreateDirectoryIfNotExistsAsync(directoryPath);
+
+            var request = (FtpWebRequest)WebRequest.Create(uploadUrl);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+            request.UsePassive = true;
+            request.KeepAlive = false;
+            request.EnableSsl = false;
+
+            try
+            {
+                using (var requestStream = await request.GetRequestStreamAsync())
+                using (var fileStream = file.OpenReadStream())
+                {
+                    await fileStream.CopyToAsync(requestStream);
+                }
+
+                using (var response = (FtpWebResponse)await request.GetResponseAsync())
+                {
+                    Console.WriteLine($"Upload File Complete, status {response.StatusDescription}");
+                }
+
+                return uploadUrl;
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                Console.WriteLine($"Error: {response.StatusDescription}");
+                return null;
+            }
+        }
+
         private void CreateDirectoryIfNotExists(string directoryPath)
         {
             var request = (FtpWebRequest)WebRequest.Create(directoryPath);
@@ -72,12 +109,37 @@ namespace Divar.Services
                 var response = (FtpWebResponse)ex.Response;
                 if (response.StatusCode != FtpStatusCode.ActionNotTakenFileUnavailable)
                 {
-                    Console.WriteLine($"خطا در ایجاد دایرکتوری: {response.StatusDescription}");
+                    Console.WriteLine($"Error in creating directory: {response.StatusDescription}");
                 }
             }
         }
 
-        // دانلود تصاویر از سرور FTP و ذخیره آن‌ها به صورت لوکال
+        private async Task CreateDirectoryIfNotExistsAsync(string directoryPath)
+        {
+            var request = (FtpWebRequest)WebRequest.Create(directoryPath);
+            request.Method = WebRequestMethods.Ftp.MakeDirectory;
+            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+            request.UsePassive = true;
+            request.KeepAlive = false;
+            request.EnableSsl = false;
+
+            try
+            {
+                using (var response = (FtpWebResponse)await request.GetResponseAsync())
+                {
+                    Console.WriteLine($"Directory created, status {response.StatusDescription}");
+                }
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                if (response.StatusCode != FtpStatusCode.ActionNotTakenFileUnavailable)
+                {
+                    Console.WriteLine($"Error in creating directory: {response.StatusDescription}");
+                }
+            }
+        }
+
         public (string ImageUrl1, string ImageUrl2, string ImageUrl3) DownloadImages(int advertisementId)
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
@@ -86,11 +148,6 @@ namespace Divar.Services
             if (!Directory.Exists(localDirectoryPath))
             {
                 Directory.CreateDirectory(localDirectoryPath);
-            }
-            else
-            {
-                // حذف تصاویر قدیمی در لوکال
-                Directory.GetFiles(localDirectoryPath).ToList().ForEach(File.Delete);
             }
 
             var imageUrls = new List<string>();
@@ -134,8 +191,6 @@ namespace Divar.Services
             return (imageUrl1, imageUrl2, imageUrl3);
         }
 
-
-        // دانلود فایل از FTP
         private void DownloadImage(string remoteFileUrl, string localFileUrl)
         {
             var request = (FtpWebRequest)WebRequest.Create(remoteFileUrl);
@@ -163,19 +218,12 @@ namespace Divar.Services
             }
         }
 
-
-
-
-
-
-        // حذف پوشه و فایل‌های داخل آن از سرور FTP
         public bool DeleteFtpDirectory(int advertisementId)
         {
             var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
 
             try
             {
-                // حذف تمامی فایل‌های داخل پوشه
                 var request = (FtpWebRequest)WebRequest.Create(directoryPath);
                 request.Method = WebRequestMethods.Ftp.ListDirectory;
                 request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
@@ -192,22 +240,11 @@ namespace Divar.Services
                         var fileName = reader.ReadLine();
                         if (!string.IsNullOrEmpty(fileName))
                         {
-                            var deleteFileRequest = (FtpWebRequest)WebRequest.Create(directoryPath + fileName);
-                            deleteFileRequest.Method = WebRequestMethods.Ftp.DeleteFile;
-                            deleteFileRequest.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
-                            deleteFileRequest.UsePassive = true;
-                            deleteFileRequest.KeepAlive = false;
-                            deleteFileRequest.EnableSsl = false;
-
-                            using (var deleteFileResponse = (FtpWebResponse)deleteFileRequest.GetResponse())
-                            {
-                                Console.WriteLine($"Deleted File: {fileName}, status {deleteFileResponse.StatusDescription}");
-                            }
+                            DeleteImage(directoryPath + fileName);
                         }
                     }
                 }
 
-                // حذف پوشه
                 var deleteDirRequest = (FtpWebRequest)WebRequest.Create(directoryPath);
                 deleteDirRequest.Method = WebRequestMethods.Ftp.RemoveDirectory;
                 deleteDirRequest.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
@@ -230,44 +267,6 @@ namespace Divar.Services
             }
         }
 
-
-
-
-
-
-
-        // ویرایش تصاویر در سرور FTP
-        public void EditImages(int advertisementId, IFormFile newImageFile1, IFormFile newImageFile2, IFormFile newImageFile3, string oldImageUrl1, string oldImageUrl2, string oldImageUrl3)
-        {
-            var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
-            var localDirectoryPath = _localPath + $"advertisement_{advertisementId}/";
-
-            // حذف تصاویر قدیمی در لوکال
-            if (Directory.Exists(localDirectoryPath))
-            {
-                // حذف فایل‌ها
-                Directory.GetFiles(localDirectoryPath).ToList().ForEach(File.Delete);
-            }
-
-            // آپلود و جایگزینی تصاویر جدید
-            if (newImageFile1 != null && newImageFile1.Length > 0)
-            {
-                UploadImageToFtp(newImageFile1, advertisementId);
-            }
-
-            if (newImageFile2 != null && newImageFile2.Length > 0)
-            {
-                UploadImageToFtp(newImageFile2, advertisementId);
-            }
-
-            if (newImageFile3 != null && newImageFile3.Length > 0)
-            {
-                UploadImageToFtp(newImageFile3, advertisementId);
-            }
-        }
-
-
-        // حذف تصویر از سرور FTP
         public void DeleteImage(string imageUrl)
         {
             var request = (FtpWebRequest)WebRequest.Create(imageUrl);
@@ -291,7 +290,88 @@ namespace Divar.Services
             }
         }
 
+        public async Task DeleteImageAsync(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                return;
+            }
+
+            var request = (FtpWebRequest)WebRequest.Create(imageUrl);
+            request.Method = WebRequestMethods.Ftp.DeleteFile;
+            request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+            request.UsePassive = true;
+            request.KeepAlive = false;
+            request.EnableSsl = false;
+
+            try
+            {
+                using (var response = (FtpWebResponse)await request.GetResponseAsync())
+                {
+                    Console.WriteLine($"Deleted Image: {imageUrl}, status {response.StatusDescription}");
+                }
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                Console.WriteLine($"Error: {response.StatusDescription}");
+            }
+        }
+
+        public async Task DeleteAllImagesAsync(int advertisementId)
+        {
+            var directoryPath = _ftpPath + $"advertisement_{advertisementId}/";
+
+            try
+            {
+                var request = (FtpWebRequest)WebRequest.Create(directoryPath);
+                request.Method = WebRequestMethods.Ftp.ListDirectory;
+                request.Credentials = new NetworkCredential(_ftpUsername, _ftpPassword);
+
+                List<string> filesToDelete = new List<string>();
+
+                using (var response = (FtpWebResponse)await request.GetResponseAsync())
+                using (var responseStream = response.GetResponseStream())
+                using (var reader = new StreamReader(responseStream))
+                {
+                    string fileName;
+                    while ((fileName = await reader.ReadLineAsync()) != null)
+                    {
+                        filesToDelete.Add(fileName);
+                    }
+                }
+
+                foreach (var fileName in filesToDelete)
+                {
+                    await DeleteImageAsync(directoryPath + fileName);
+                }
+
+                Console.WriteLine($"All images deleted for advertisement {advertisementId}");
+            }
+            catch (WebException ex)
+            {
+                var response = (FtpWebResponse)ex.Response;
+                Console.WriteLine($"Error deleting images: {response.StatusDescription}");
+            }
+        }
+
+        public async Task ClearLocalCacheAsync(int advertisementId)
+        {
+            var localDirectoryPath = Path.Combine(_localPath, $"advertisement_{advertisementId}");
+            if (Directory.Exists(localDirectoryPath))
+            {
+                Directory.Delete(localDirectoryPath, true);
+            }
+            await Task.CompletedTask; // To make the method async
+        }
+
+        public string GetCacheBustedImageUrl(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                return null;
+            }
+            return $"{imageUrl}?t={DateTime.Now.Ticks}";
+        }
     }
 }
-
-

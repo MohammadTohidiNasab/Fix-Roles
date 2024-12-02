@@ -175,7 +175,6 @@
                 ad.Title = updatedAdvertisement.Title;
                 ad.Content = updatedAdvertisement.Content;
                 ad.Price = updatedAdvertisement.Price;
-                // سایر خصوصیات سفارشی
                 ad.SimCardsNumber = updatedAdvertisement.SimCardsNumber;
                 ad.MobileBrand = updatedAdvertisement.MobileBrand;
                 ad.BookAuthor = updatedAdvertisement.BookAuthor;
@@ -184,37 +183,44 @@
                 ad.HomeAddress = updatedAdvertisement.HomeAddress;
                 ad.HomeSize = updatedAdvertisement.HomeSize;
 
-                // ویرایش تصاویر در سرور FTP
-                if (newImageFile1 != null && newImageFile1.Length > 0)
-                {
-                    var oldImageUrl1 = ad.ImageUrl;
-                    _ftpService.UploadImageToFtp(newImageFile1, ad.Id);
-                    ad.ImageUrl = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile1.FileName;
-                    _ftpService.DeleteImage(oldImageUrl1); // حذف تصویر قدیمی
-                }
+                // حذف تمام تصاویر موجود
+                await _ftpService.DeleteAllImagesAsync(ad.Id);
 
-                if (newImageFile2 != null && newImageFile2.Length > 0)
-                {
-                    var oldImageUrl2 = ad.ImageUrl2;
-                    _ftpService.UploadImageToFtp(newImageFile2, ad.Id);
-                    ad.ImageUrl2 = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile2.FileName;
-                    _ftpService.DeleteImage(oldImageUrl2); // حذف تصویر قدیمی
-                }
-
-                if (newImageFile3 != null && newImageFile3.Length > 0)
-                {
-                    var oldImageUrl3 = ad.ImageUrl3;
-                    _ftpService.UploadImageToFtp(newImageFile3, ad.Id);
-                    ad.ImageUrl3 = $"ftp://127.0.0.1/advertisement_{ad.Id}/" + newImageFile3.FileName;
-                    _ftpService.DeleteImage(oldImageUrl3); // حذف تصویر قدیمی
-                }
+                // آپلود تصاویر جدید یا حفظ تصاویر موجود
+                ad.ImageUrl = await UpdateImageAsync(newImageFile1, ad.Id, 1, ad.ImageUrl);
+                ad.ImageUrl2 = await UpdateImageAsync(newImageFile2, ad.Id, 2, ad.ImageUrl2);
+                ad.ImageUrl3 = await UpdateImageAsync(newImageFile3, ad.Id, 3, ad.ImageUrl3);
 
                 await _adRepository.UpdateAdvertisementAsync(ad);
+
+                // پاک کردن کش محلی برای این آگهی
+                await _ftpService.ClearLocalCacheAsync(ad.Id);
+
                 return RedirectToAction(nameof(Index));
             }
             return View(updatedAdvertisement);
         }
 
+        private async Task<string> UpdateImageAsync(IFormFile newImageFile, int advertisementId, int imageNumber, string existingImageUrl)
+        {
+            if (newImageFile != null && newImageFile.Length > 0)
+            {
+                return await _ftpService.UploadImageToFtpAsync(newImageFile, advertisementId, imageNumber);
+            }
+            else if (!string.IsNullOrEmpty(existingImageUrl))
+            {
+                // بارگذاری مجدد تصویر موجود
+                var fileName = Path.GetFileName(existingImageUrl);
+                var localPath = Path.Combine("wwwroot", "uploads", $"advertisement_{advertisementId}", fileName);
+                if (System.IO.File.Exists(localPath))
+                {
+                    using var fileStream = new FileStream(localPath, FileMode.Open);
+                    var formFile = new FormFile(fileStream, 0, fileStream.Length, null, fileName);
+                    return await _ftpService.UploadImageToFtpAsync(formFile, advertisementId, imageNumber);
+                }
+            }
+            return null;
+        }
 
 
         //[Authorize(Policy = "RequireHomeEdit")]
