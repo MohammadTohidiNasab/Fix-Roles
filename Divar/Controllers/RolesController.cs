@@ -4,9 +4,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Divar.Models;
 
-
-
-
 namespace Divar.Controllers
 {
     public class RolesController : Controller
@@ -28,15 +25,11 @@ namespace Divar.Controllers
             _signInManager = signInManager;
         }
 
-
-
         public IActionResult Index()
         {
             var roles = _roleManager.Roles.ToList();
             return View(roles);
         }
-
-
 
         // ایجاد نقش جدید
         [HttpGet]
@@ -95,10 +88,6 @@ namespace Divar.Controllers
             return View(model);
         }
 
-
-
-
-
         // حذف نقش
         public async Task<IActionResult> DeleteRole(string id)
         {
@@ -121,9 +110,6 @@ namespace Divar.Controllers
 
             return RedirectToAction("Index");
         }
-
-
-
 
         //  اختصاص نقش به کاربر
         public IActionResult SelectUser()
@@ -165,7 +151,6 @@ namespace Divar.Controllers
             return View(model);
         }
 
-
         // مدیریت نقش کاربران (POST)
         [HttpPost]
         public async Task<IActionResult> ManageRole(ManageRoleViewModel model)
@@ -192,40 +177,40 @@ namespace Divar.Controllers
                 await _userManager.AddToRoleAsync(user, role);
             }
 
-            // Remove all existing claims
-            var existingClaims = await _userManager.GetClaimsAsync(user);
-            await _userManager.RemoveClaimsAsync(user, existingClaims);
-
-            // Add new claims based on the updated roles
-            var newClaims = new List<Claim>();
-            foreach (var roleName in model.Roles)
+            if (User.Identity.IsAuthenticated)
             {
-                var role = await _roleManager.FindByNameAsync(roleName);
-                if (role != null)
-                {
-                    var rolePermissions = _context.RolePermissions
-                        .Where(rp => rp.RoleId == role.Id)
-                        .Select(rp => rp.Permission.ToString())
-                        .ToList();
+                // Remove all existing claims
+                var existingClaims = await _userManager.GetClaimsAsync(user);
+                await _userManager.RemoveClaimsAsync(user, existingClaims);
 
-                    foreach (var permission in rolePermissions)
+                // Add new claims based on the updated roles
+                var newClaims = new List<Claim>();
+                foreach (var roleName in model.Roles)
+                {
+                    var role = await _roleManager.FindByNameAsync(roleName);
+                    if (role != null)
                     {
-                        newClaims.Add(new Claim("Permission", permission));
+                        var rolePermissions = _context.RolePermissions
+                            .Where(rp => rp.RoleId == role.Id)
+                            .Select(rp => rp.Permission.ToString())
+                            .ToList();
+
+                        foreach (var permission in rolePermissions)
+                        {
+                            newClaims.Add(new Claim("Permission", permission));
+                        }
                     }
                 }
+
+                // Add the new claims
+                await _userManager.AddClaimsAsync(user, newClaims);
+
+                // Update the user's sign-in with the new claims
+                await _signInManager.RefreshSignInAsync(user);
             }
-
-            // Add the new claims
-            await _userManager.AddClaimsAsync(user, newClaims);
-
-            // Update the user's sign-in with the new claims
-            await _signInManager.RefreshSignInAsync(user);
 
             return RedirectToAction("Index");
         }
-
-
-
 
         //ویرایش نقش ها
         public async Task<IActionResult> EditRole(string id)
@@ -306,5 +291,3 @@ namespace Divar.Controllers
 
     }
 }
-
-
