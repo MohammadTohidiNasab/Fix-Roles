@@ -9,8 +9,8 @@
         CommentIndex,
         CommentCreate,
         CommentEdit,
-        HomeSelectCategory,
-        HomeEdit,
-        HomeDelete,
+        HomeCreateAdvertisement,
+        HomeEditAdvertisement,
+        HomeDeleteAdvertisement,
     }
 }

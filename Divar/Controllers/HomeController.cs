@@ -1,4 +1,6 @@
-﻿namespace Divar.Controllers
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Divar.Controllers
 {
     public class HomeController : Controller
     {
@@ -11,6 +13,8 @@
             _adRepository = adRepository;
             _ftpService = ftpService;
         }
+
+
 
         // Show all advertisements
         public async Task<IActionResult> Index(int pageNumber = 1, CategoryType? category = null, string searchTerm = "")
@@ -35,7 +39,7 @@
 
 
 
-
+        //جست و جو میان تیتر اگهی ها 
         public async Task<IActionResult> Search(string searchTerm)
         {
             // Redirect to Index action with pageNumber set to 1
@@ -43,6 +47,7 @@
         }
 
 
+        //جزییات اگهی
         public async Task<IActionResult> Detail(int id)
         {
             var ad = await _adRepository.GetAdvertisementByIdAsync(id);
@@ -64,8 +69,8 @@
 
 
         //ایجاد اگهی
-        //[Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
+        [Authorize(Policy = "RequireHomeCreateAdvertisement")]
         public IActionResult Create()
         {
             var selectedCategory = HttpContext.Session.GetString("SelectedCategory");
@@ -79,8 +84,10 @@
             return View(model);
         }
 
-        // [Authorize(Policy = "RequireHomeSelectCategory")]
+
+
         [HttpPost]
+        [Authorize(Policy = "RequireHomeCreateAdvertisement")]
         public async Task<IActionResult> Create(Advertisement advertisement, IFormFile? imageFile, IFormFile? imageFile2, IFormFile? imageFile3)
         {
             var userId = HttpContext.Session.GetString("UserId");
@@ -130,20 +137,18 @@
 
 
 
-
-
         //انتخاب دسته بندی
-        //[Authorize(Policy = "RequireHomeSelectCategory")]
         [HttpGet]
+        [Authorize(Policy = "RequireHomeCreateAdvertisement")]
         public IActionResult SelectCategory()
         {
             var categories = Enum.GetValues(typeof(CategoryType)).Cast<CategoryType>();
             return View(categories);
         }
 
-
-        //[Authorize(Policy = "RequireHomeSelectCategory")]
+        //اعمال دسته بندی انتخاب شده
         [HttpGet]
+        [Authorize(Policy = "RequireHomeCreateAdvertisement")]
         public IActionResult SetCategory(CategoryType category)
         {
             HttpContext.Session.SetString("SelectedCategory", category.ToString());
@@ -155,12 +160,29 @@
 
 
 
+        // ویرایش اگهی ها
+        [HttpGet]
+        [Authorize(Policy = "RequireHomeEditAdvertisement")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var ad = await _adRepository.GetAdvertisementByIdAsync(id);
+            if (ad == null)
+            {
+                return NotFound();
+            }
+
+            // ارسال نام فایل‌ها به ویو
+            ViewBag.ImageFileName1 = Path.GetFileName(ad.ImageUrl);
+            ViewBag.ImageFileName2 = Path.GetFileName(ad.ImageUrl2);
+            ViewBag.ImageFileName3 = Path.GetFileName(ad.ImageUrl3);
+
+            return View(ad);
+        }
 
 
 
-        // Edit Advertisement
-        //[Authorize(Policy = "RequireHomeEdit")]
         [HttpPost]
+        [Authorize(Policy = "RequireHomeEditAdvertisement")]
         public async Task<IActionResult> Edit(int id, Advertisement updatedAdvertisement, IFormFile? newImageFile1, IFormFile? newImageFile2, IFormFile? newImageFile3)
         {
             if (ModelState.IsValid)
@@ -223,31 +245,11 @@
         }
 
 
-        //[Authorize(Policy = "RequireHomeEdit")]
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var ad = await _adRepository.GetAdvertisementByIdAsync(id);
-            if (ad == null)
-            {
-                return NotFound();
-            }
-
-            // ارسال نام فایل‌ها به ویو
-            ViewBag.ImageFileName1 = Path.GetFileName(ad.ImageUrl);
-            ViewBag.ImageFileName2 = Path.GetFileName(ad.ImageUrl2);
-            ViewBag.ImageFileName3 = Path.GetFileName(ad.ImageUrl3);
-
-            return View(ad);
-        }
 
 
 
-
-
-
-        // Delete advertisements
-        //[Authorize(Policy = "RequireHomeDelete")]
+        // حذف اگهی ها
+        [Authorize(Policy = "RequireHomeDeleteAdvertisement")]
         public async Task<IActionResult> Delete(int id)
         {
             var ad = await _adRepository.GetAdvertisementByIdAsync(id);
@@ -259,8 +261,9 @@
             return View(ad);
         }
 
-        // Delete Confirm
-       // [Authorize(Policy = "RequireHomeDelete")]
+
+        // تایید حذف اگهی
+        [Authorize(Policy = "RequireHomeDeleteAdvertisement")]
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -281,7 +284,8 @@
 
 
 
-        // User dashboard 
+
+        // داشبورد کاربر 
         public async Task<IActionResult> Dashboard(int pageNumber = 1)
         {
             var userId = HttpContext.Session.GetString("UserId"); // Changed to string

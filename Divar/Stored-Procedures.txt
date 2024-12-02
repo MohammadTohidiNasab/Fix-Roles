@@ -120,7 +120,7 @@ GO
 
 
 
--- حذف کامنت
+-- برای حذف کامنت 
 CREATE PROCEDURE DeleteComment
     @Id INT
 AS

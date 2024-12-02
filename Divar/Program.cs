@@ -46,20 +46,14 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireCommentEdit", policy =>
         policy.RequireClaim("Permission", AccessLevel.CommentEdit.ToString()));
 
-    options.AddPolicy("RequireHomeSelectCategory", policy =>
-        policy.RequireClaim("Permission", AccessLevel.HomeSelectCategory.ToString()));
+    options.AddPolicy("RequireHomeCreateAdvertisement", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeCreateAdvertisement.ToString()));
 
-    options.AddPolicy("RequireHomeEdit", policy =>
-        policy.RequireClaim("Permission", AccessLevel.HomeEdit.ToString()));
+    options.AddPolicy("RequireHomeEditAdvertisement", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeEditAdvertisement.ToString()));
 
-    options.AddPolicy("RequireHomeDelete", policy =>
-        policy.RequireClaim("Permission", AccessLevel.HomeDelete.ToString()));
-
-    //options.AddPolicy("RequireUserRegister", policy =>
-    //    policy.RequireClaim("Permission", AccessLevel.UserRegister.ToString()));
-
-    //options.AddPolicy("RequireUserLogin", policy =>
-    //    policy.RequireClaim("Permission", AccessLevel.UserLogin.ToString()));
+    options.AddPolicy("RequireHomeDeleteAdvertisement", policy =>
+        policy.RequireClaim("Permission", AccessLevel.HomeDeleteAdvertisement.ToString()));
 });
 
 
