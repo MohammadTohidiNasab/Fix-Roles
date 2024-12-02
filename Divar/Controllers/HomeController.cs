@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace Divar.Controllers
+﻿namespace Divar.Controllers
 {
     public class HomeController : Controller
     {

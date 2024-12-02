@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
-namespace Divar.Controllers
+﻿namespace Divar.Controllers
 {
     public class UserController : Controller
     {

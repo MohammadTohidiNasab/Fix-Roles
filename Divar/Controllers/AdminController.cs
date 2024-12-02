@@ -1,7 +1,4 @@
-﻿using Divar.Services;
-using Microsoft.AspNetCore.Authorization;
-
-public class AdminController : Controller
+﻿public class AdminController : Controller
 {
     private readonly IAdminRepository _adminRepository;
     private readonly FtpService _ftpService;

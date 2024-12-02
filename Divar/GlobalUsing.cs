@@ -12,3 +12,5 @@ global using Divar.Repositories;
 global using Divar.DAL;
 global using System.Net;
 global using Divar.Services;
+global using Microsoft.AspNetCore.Authorization;
+global using System.Security.Claims;

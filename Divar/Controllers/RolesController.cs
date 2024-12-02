@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Divar.Models;
-
-namespace Divar.Controllers
+﻿namespace Divar.Controllers
 {
     public class RolesController : Controller
     {
@@ -30,6 +24,7 @@ namespace Divar.Controllers
             var roles = _roleManager.Roles.ToList();
             return View(roles);
         }
+
 
         // ایجاد نقش جدید
         [HttpGet]
@@ -88,6 +83,8 @@ namespace Divar.Controllers
             return View(model);
         }
 
+
+
         // حذف نقش
         public async Task<IActionResult> DeleteRole(string id)
         {
@@ -110,6 +107,8 @@ namespace Divar.Controllers
 
             return RedirectToAction("Index");
         }
+
+
 
         //  اختصاص نقش به کاربر
         public IActionResult SelectUser()
@@ -313,7 +312,5 @@ namespace Divar.Controllers
 
             return View(model);
         }
-
-
     }
 }
