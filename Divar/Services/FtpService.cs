@@ -362,7 +362,7 @@ namespace Divar.Services
             {
                 Directory.Delete(localDirectoryPath, true);
             }
-            await Task.CompletedTask; // To make the method async
+            await Task.CompletedTask; 
         }
 
         public string GetCacheBustedImageUrl(string imageUrl)

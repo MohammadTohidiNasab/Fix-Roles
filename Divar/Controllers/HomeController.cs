@@ -95,7 +95,6 @@
                 advertisement.CreatedDate = DateTime.Now;
                 await _adRepository.AddAdvertisementAsync(advertisement);
 
-                // آپلود عکس‌ها به سرور FTP (فقط اگر فایل وجود داشته باشد)
                 List<IFormFile> imageFiles = new List<IFormFile> { imageFile, imageFile2, imageFile3 };
                 for (int i = 0; i < imageFiles.Count; i++)
                 {
@@ -286,7 +285,7 @@
         // داشبورد کاربر 
         public async Task<IActionResult> Dashboard(int pageNumber = 1)
         {
-            var userId = HttpContext.Session.GetString("UserId"); // Changed to string
+            var userId = HttpContext.Session.GetString("UserId"); 
             if (string.IsNullOrEmpty(userId))
             {
                 return RedirectToAction("Login", "Account");

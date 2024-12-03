@@ -94,7 +94,7 @@
                         {
                             var rolePermissions = _context.RolePermissions
                                 .Where(rp => rp.RoleId == role.Id)
-                                .Select(rp => rp.Permission.ToString()) // Get the permission as a string
+                                .Select(rp => rp.Permission.ToString()) 
                                 .ToList();
 
                             // Add each permission as a separate claim
