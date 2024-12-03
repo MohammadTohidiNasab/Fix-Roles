@@ -32,7 +32,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireClaim("Permission", AccessLevel.AdminDeleteUser.ToString()));
 
     options.AddPolicy("RequireDeleteComment", policy =>
-        policy.RequireClaim("Permission", AccessLevel.AdminDeleteComment.ToString()));
+        policy.RequireClaim("Permission", AccessLevel.CommentDelete.ToString()));
 
     options.AddPolicy("RequireAdminAdvertisementDetail", policy =>
         policy.RequireClaim("Permission", AccessLevel.AdminAdvertisementDetail.ToString()));

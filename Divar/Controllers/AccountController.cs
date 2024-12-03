@@ -1,22 +1,32 @@
 ﻿namespace Divar.Controllers
 {
-    public class UserController : Controller
+    public class AccountController : Controller
     {
         private readonly UserManager<CustomUser> _userManager;
         private readonly SignInManager<CustomUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly DivarDbContext _context;
 
-        public UserController(UserManager<CustomUser> userManager,
-                              SignInManager<CustomUser> signInManager,
-                              RoleManager<IdentityRole> roleManager,
-                              DivarDbContext context)
+        public AccountController(UserManager<CustomUser> userManager,
+                      SignInManager<CustomUser> signInManager,
+                      RoleManager<IdentityRole> roleManager,
+                      DivarDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
             _context = context;
         }
+
+
+        //درسترسی مجاز نیست
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+
+
 
         // Register controller
         [HttpGet]
@@ -42,7 +52,7 @@
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction("Login", "User");
+                    return RedirectToAction("Login", "Account");
                 }
                 foreach (var error in result.Errors)
                 {
@@ -121,35 +131,6 @@
 
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
-        }
-
-
-        // Profile
-        [HttpGet]
-        public IActionResult Profile()
-        {
-            var userClaims = User.Claims.Select(c => new
-            {
-                Type = c.Type,
-                Value = c.Value
-            }).ToList();
-
-            // دریافت سشن‌های مرتبط با کاربر
-            var sessionData = HttpContext.Session.Keys
-                .Select(key => new
-                {
-                    Key = key,
-                    Value = HttpContext.Session.GetString(key) // assuming the session values are stored as strings
-                }).ToList();
-
-            // ترکیب اطلاعات کاربر با سشن‌ها
-            var model = new
-            {
-                UserClaims = userClaims,
-                SessionData = sessionData
-            };
-
-            return View(model);
         }
     }
 }

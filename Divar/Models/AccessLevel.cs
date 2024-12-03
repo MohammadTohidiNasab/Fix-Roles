@@ -4,11 +4,11 @@
     {
         AdminIndex,
         AdminDeleteUser,
-        AdminDeleteComment,
         AdminAdvertisementDetail,
         CommentIndex,
         CommentCreate,
         CommentEdit,
+        CommentDelete,
         HomeCreateAdvertisement,
         HomeEditAdvertisement,
         HomeDeleteAdvertisement,

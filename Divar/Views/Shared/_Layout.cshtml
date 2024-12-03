@@ -52,11 +52,11 @@
                 <li>
                     @if (Context.Session.GetString("UserEmail") != null)
                     {
-                    <li><a asp-action="Logout" asp-controller="user"> خروج از حساب</a></li>
+                    <li><a asp-action="Logout" asp-controller="Account"> خروج از حساب</a></li>
                     }
                     else
                     {
-                    <li><a asp-action="Login" asp-controller="user"> ورود به حساب</a></li>
+                    <li><a asp-action="Login" asp-controller="Account"> ورود به حساب</a></li>
                     }
                 </li>
 
@@ -76,7 +76,7 @@
                     }
                     else
                     {
-                    <li><a asp-action="Login" asp-controller="user"> ثبت اگهی</a></li>
+                    <li><a asp-action="Login" asp-controller="Account"> ثبت اگهی</a></li>
                     }
                </li>
 

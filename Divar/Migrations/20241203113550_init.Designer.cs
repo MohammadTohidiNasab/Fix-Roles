@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Divar.Migrations
 {
     [DbContext(typeof(DivarDbContext))]
-    [Migration("20241124114140_3")]
-    partial class _3
+    [Migration("20241203113550_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

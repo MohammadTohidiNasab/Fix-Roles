@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Divar.Views.User
+namespace Divar.Views.Account
 {
     public class RegisterModel : PageModel
     {
