@@ -14,7 +14,7 @@
 
 
 
-        // Show all advertisements
+        // نمایش تمامی آگهی ها
         public async Task<IActionResult> Index(int pageNumber = 1, CategoryType? category = null, string searchTerm = "")
         {
             var totalAds = await _adRepository.GetTotalAdvertisementsCountAsync(category, searchTerm);
