@@ -1,0 +1,151 @@
+تغییر در دسترسی ها 
+دسترسی ها به صورت 
+RolBase
+کار میکردن تغییر به داینامیک و انتخاب عملگرها برای نقش در هنگام ساختش
+
+
+
+تغییر اپلود عکس ها از لینک عکس به فایل 
+تغییر ذخیره داخلی عکس ها به سرور اف تی پی
+
+
+تغییر کنترولر اکانت  از 
+EF
+به 
+Ado.net
+و هش کردن پسورد کاربران با بیکریپت
+
+
+
+بهبود کارایی استور پروسیجرها و استفاده نکردن از عملگر ستاره
+
+
+
+اضافه کردن دسترسی به عملیات های حذف و اضافه و دسترسی کامل در پنل ادمین
+
+
+
+تعیین معماری پروژه (اعمال نشده)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ساختار درختی معماری تعیین شده
+
+
+
+Divar
+│
+├── Presentation
+│   ├── Controllers
+│   │   ├── HomeController.cs
+│   │   ├── AdminController.cs
+│   │   ├── AccountController.cs
+│   │   ├── CommentController.cs
+│   │   └── RolesController.cs
+│   │
+│   └── Views
+│       ├── Account
+│       │   ├── AccessDenied.cshtml
+│       │   └── Login.cshtml
+│       │
+│       ├── Admin
+│       │   ├── AdvertisementDetail.cshtml
+│       │   ├── DeleteUser.cshtml
+│       │   └── (محتوای مربوطه)
+│       │
+│       ├── Comment
+│       │   ├── Edit.cshtml
+│       │   ├── Create.cshtml
+│       │   └── Index.cshtml
+│       │
+│       ├── Home
+│       │   ├── Create.cshtml
+│       │   ├── Edit.cshtml
+│       │   ├── Index.cshtml
+│       │   ├── Privacy.cshtml
+│       │   └── SelectCategory.cshtml
+│       │
+│       ├── Roles
+│       │   ├── Index.cshtml
+│       │   ├── EditRole.cshtml
+│       │   ├── CreateRole.cshtml
+│       │   ├── ManageRole.cshtml
+│       │   └── SelectUser.cshtml
+│       │
+│       └── Shared
+│           ├── _Layout.cshtml
+│           ├── _ValidationScriptsPartial.cshtml
+│           ├── Error.cshtml
+│           ├── _ViewImports.cshtml
+│           └── _ViewStart.cshtml
+│
+├── Application
+│   ├── Interfaces
+│   │   ├── IAdvertisementService.cs
+│   │   ├── IAdminService.cs
+│   │   ├── IUserService.cs
+│   │   └── IRoleService.cs
+│   │
+│   └── Services
+│       ├── AdvertisementService.cs
+│       ├── AdminService.cs
+│       ├── UserService.cs
+│       └── RoleService.cs
+│
+├── Domain
+│   ├── Models
+│   │   ├── Role.cs
+│   │   ├── CustomUser.cs
+│   │   ├── AccessLevel.cs
+│   │   ├── Advertisement.cs
+│   │   ├── Comment.cs
+│   │   └── RolePermission.cs
+│   │
+│   └── ViewModels
+│       ├── LoginViewModel.cs
+│       ├── AssignRoleViewModel.cs
+│       ├── AdminPanel.cs
+│       ├── CreateRoleViewModel.cs
+│       ├── ManageRoleViewModel.cs
+│       └── RegisterViewModel.cs
+│
+├── Infrastructure
+│   ├── Data
+│   │   ├── DivarDbContext.cs
+│   │   └── Repositories
+│   │       ├── AdoAdminRepository.cs
+│   │       ├── AdoUserRepository.cs
+│   │       └── EfAdvertisementRepository.cs
+│   │
+│   ├── Services
+│   │   └── FtpService.cs
+│   │
+│   └── Migrations
+│       └── (محتوای مربوطه)
+│
+├── wwwroot
+│   ├── favicon.ico
+│   ├── css
+│   ├── image
+│   ├── js
+│   ├── lib
+│   
+│
+├── appsettings.json
+├── GlobalUsing.cs
+├── Program.cs
+├── requirements.txt
+└── Stored-Procedures.txt
+
